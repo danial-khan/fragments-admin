@@ -153,13 +153,23 @@ const Authors = () => {
                     </td>
                     <td className="border border-gray-300 p-2">
                       <a
-                        href={author.file}
+                        onClick={() => {
+                          const win = window.open();
+                          const iframe = document.createElement("iframe");
+                          iframe.src = author.file;
+                          iframe.style.height = "100%";
+                          iframe.style.width = "100%";
+                          const style = document.createElement("style");
+                          style.innerHTML = `html, body { padding: 0; margin: 0}`;
+                          win?.document.head.appendChild(style);
+                          win?.document.body.appendChild(iframe);
+
+                        }}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                        download
+                        className="text-blue-500 underline cursor-pointer"
                       >
-                        Download
+                        View
                       </a>
                     </td>
                     <td className="border border-gray-300 p-2">
