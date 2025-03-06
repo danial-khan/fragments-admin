@@ -116,7 +116,7 @@ const Authors = () => {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={7} className="text-center p-4">
+                <td colSpan={8} className="text-center p-4">
                   Loading...
                 </td>
               </tr>
@@ -127,10 +127,10 @@ const Authors = () => {
                   <tr key={author._id} className="hover:bg-gray-50">
                     <td className="border border-gray-300 relative p-3">
                       <button
-                        onClick={() => toggleExpand(author.id)}
+                        onClick={() => toggleExpand(author._id)}
                         className="flex items-center"
                       >
-                        {expandedRow === author.id ? (
+                        {expandedRow === author._id ? (
                           <FaChevronUp className="mr-2" />
                         ) : (
                           <FaChevronDown className="mr-2" />
@@ -163,7 +163,6 @@ const Authors = () => {
                           style.innerHTML = `html, body { padding: 0; margin: 0}`;
                           win?.document.head.appendChild(style);
                           win?.document.body.appendChild(iframe);
-
                         }}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -200,7 +199,7 @@ const Authors = () => {
                   </tr>
 
                   {/* Expanded Row */}
-                  {expandedRow === author.id && (
+                  {expandedRow === author._id && (
                     <tr className="bg-gray-50">
                       <td colSpan={8} className="border border-gray-300 p-4">
                         <p>
@@ -214,7 +213,7 @@ const Authors = () => {
             )}
             {!isLoading && !authorsData.length ? (
               <tr>
-                <td colSpan={7} className="p-4 text-center">
+                <td colSpan={8} className="p-4 text-center">
                   No Authors data found
                 </td>
               </tr>
