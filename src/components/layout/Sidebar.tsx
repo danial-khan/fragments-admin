@@ -1,7 +1,9 @@
 import React, { useCallback } from "react";
 import {
   faHome,
+  faIcons,
   faSignOut,
+  faUser,
   faUserGraduate,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
@@ -16,12 +18,14 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const sidebarItems = [
     { label: "Dashboard", icon: faHome, to: "/dashboard" },
+    { label: "Users", icon: faUser, to: "/dashboard/users" },
     {
-      label: "Authors",
+      label: "Authors Credentials",
       icon: faUserGraduate,
       to: "/dashboard/authors",
     },
-    { label: "Students", icon: faUsers, to: "/dashboard/students" },
+    { label: "Students Credentials", icon: faUsers, to: "/dashboard/students" },
+    { label: 'Categories', icon: faIcons, to: '/dashboard/categories' },
   ];
 
   const logout = useCallback(() => {

@@ -7,6 +7,8 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import LoginPage from "./components/pages/login";
 import { ToastContainer } from "react-toastify";
 import AuthContextProvider from "./context/authContext";
+import Users from "./components/pages/users";
+import Categories from "./components/pages/categories";
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
             <Route path="" Component={Dashboard} />
             <Route path="authors" Component={Authors} />
             <Route path="students" Component={Students} />
+            <Route path="users" Component={Users} />
+            <Route path="categories" Component={Categories} />
           </Route>
         </Routes>
       </BrowserRouter>

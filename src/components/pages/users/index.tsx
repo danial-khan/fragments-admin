@@ -1,0 +1,172 @@
+"use client";
+import { useCallback, useEffect, useState } from "react";
+import React from "react";
+import apiFetch from "../../../utils/axios";
+import { toast } from "react-toastify";
+import clsx from "clsx";
+
+const Users = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [usersData, setUsersData] = useState<any[]>([]);
+
+  const getUsers = useCallback(() => {
+    setIsLoading(true);
+    apiFetch
+      .get("/admin/users")
+      .then((res) => {
+        setUsersData(res.data.users);
+      })
+      .catch(() => {
+        toast("Something went wrong, please try again later", {
+          type: "error",
+        });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
+
+  const activateUser = (userId) => {
+    const newStatus = true;
+    let originalStatus;
+    setUsersData((users) => {
+      const user = users.find((user) => user._id === userId);
+      originalStatus = user.active;
+      user.active = newStatus;
+      return [...users];
+    });
+    apiFetch
+      .post("/admin/users/active", { userId })
+      .then(() => {
+        toast("User activated successfully", { type: "success" });
+      })
+      .catch(() => {
+        toast("Error while activating user, please try again later", {
+          type: "error",
+        });
+        setUsersData((users) => {
+          const user = users.find((user) => user._id === userId);
+          user.active = originalStatus;
+          return [...users];
+        });
+      });
+  };
+
+  const deactivateUser = (userId) => {
+    const newStatus = false;
+    let originalStatus;
+    setUsersData((users) => {
+      const user = users.find((user) => user._id === userId);
+      originalStatus = user.active;
+      user.active = newStatus;
+      return [...users];
+    });
+    apiFetch
+      .post("/admin/users/inactive", { userId })
+      .then(() => {
+        toast("User deactivated successfully", { type: "success" });
+      })
+      .catch(() => {
+        toast("Error while deactivating user, please try again later", {
+          type: "error",
+        });
+        setUsersData((users) => {
+          const user = users.find((user) => user._id === userId);
+          user.active = originalStatus;
+          return [...users];
+        });
+      });
+  };
+
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+
+  return (
+    <div>
+      <h1 className="text-2xl font-bold mb-6 text-secondary">Users</h1>
+
+      <div className="overflow-x-auto">
+        <table className="w-full border-collapse border border-gray-300">
+          <thead className="bg-secondary text-white">
+            <tr>
+              <th className="border border-gray-300 p-2 text-left">Name</th>
+              <th className="border border-gray-300 p-2 text-left">Email</th>
+              <th className="border border-gray-300 p-2 text-left">Type</th>
+              <th className="border border-gray-300 p-2 text-left">
+                Created At
+              </th>
+              <th className="border border-gray-300 p-2 text-left">
+                Updated At
+              </th>
+              <th className="border border-gray-300 p-2 text-left">Status</th>
+              <th className="border border-gray-300 p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={7} className="text-center p-4">
+                  Loading...
+                </td>
+              </tr>
+            ) : (
+              usersData?.map((user) => (
+                <>
+                  {/* Main Row */}
+                  <tr key={user._id} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 p-2">{user.email}</td>
+                    <td className="border border-gray-300 p-2">{user.type}</td>
+                    <td className="border border-gray-300 p-2">
+                      {user.createdAt}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {user.updatedAt}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {user.active ? "Active" : "Inactive"}
+                    </td>
+                    <td className={clsx('px-2', {
+                          "bg-green-500 text-white": user.active,
+                          "bg-red-500 text-white":!user.active,
+                        })}>
+                        {user.active ? "Active" : "Inactive"}
+                    </td>
+                    <td className="border border-gray-300 py-2">
+                      <div className="flex justify-center gap-2">
+                        {user.active ? (
+                          <button
+                            onClick={() => deactivateUser(user._id)}
+                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
+                          >
+                            Deactivate
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => activateUser(user._id)}
+                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
+                          >
+                            Activate
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                </>
+              ))
+            )}
+            {!isLoading && !usersData.length ? (
+              <tr>
+                <td colSpan={7} className="p-4 text-center">
+                  No Users data found
+                </td>
+              </tr>
+            ) : null}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Users;

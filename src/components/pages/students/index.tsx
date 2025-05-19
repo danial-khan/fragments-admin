@@ -93,7 +93,7 @@ const Students = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Students</h1>
+      <h1 className="text-2xl font-bold mb-6 text-secondary">Students Credentials</h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
