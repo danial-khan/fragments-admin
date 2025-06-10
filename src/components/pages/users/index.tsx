@@ -1,13 +1,14 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import React from "react";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import clsx from "clsx";
+import { useAuthContext } from "../../../context/authContext";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [usersData, setUsersData] = useState<any[]>([]);
+  const { user } = useAuthContext();
 
   const getUsers = useCallback(() => {
     setIsLoading(true);
@@ -100,7 +101,12 @@ const Users = () => {
                 Updated At
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
+
+              {user?.type === "admin" && (
+                <th className="border border-gray-300 p-2 text-left">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -111,46 +117,50 @@ const Users = () => {
                 </td>
               </tr>
             ) : (
-              usersData?.map((user) => (
+              usersData?.map((userData) => (
                 <>
                   {/* Main Row */}
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2">{user.email}</td>
-                    <td className="border border-gray-300 p-2">{user.type}</td>
+                  <tr key={userData._id} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 p-2">{userData.name}</td>
+                    <td className="border border-gray-300 p-2">{userData.email}</td>
+                    <td className="border border-gray-300 p-2">{userData.type}</td>
                     <td className="border border-gray-300 p-2">
-                      {user.createdAt}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {user.updatedAt}
+                      {userData.createdAt}
                     </td>
                     <td className="border border-gray-300 p-2">
-                      {user.active ? "Active" : "Inactive"}
+                      {userData.updatedAt}
                     </td>
-                    <td className={clsx('px-2', {
-                          "bg-green-500 text-white": user.active,
-                          "bg-red-500 text-white":!user.active,
-                        })}>
-                        {user.active ? "Active" : "Inactive"}
+                    <td
+                      className={clsx("px-2", {
+                        "bg-green-500 text-white": userData.active,
+                        "bg-red-500 text-white": !userData.active,
+                      })}
+                    >
+                      {userData.active ? "Active" : "Inactive"}
                     </td>
-                    <td className="border border-gray-300 py-2">
-                      <div className="flex justify-center gap-2">
-                        {user.active ? (
-                          <button
-                            onClick={() => deactivateUser(user._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
-                          >
-                            Deactivate
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() => activateUser(user._id)}
-                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
-                          >
-                            Activate
-                          </button>
-                        )}
-                      </div>
-                    </td>
+                    {user?.type === "admin" && (
+                      <td className="border border-gray-300 py-2">
+                        <div className="flex justify-center gap-2">
+                          <>
+                            {userData.active ? (
+                              <button
+                                onClick={() => deactivateUser(userData._id)}
+                                className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
+                              >
+                                Deactivate
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => activateUser(userData._id)}
+                                className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
+                              >
+                                Activate
+                              </button>
+                            )}
+                          </>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 </>
               ))

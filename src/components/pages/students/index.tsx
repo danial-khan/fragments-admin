@@ -1,14 +1,16 @@
 "use client";
-import { createElement, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import React from "react";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/authContext";
+import clsx from "clsx";
 
 const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [studentsData, setStudentsData] = useState<any[]>([]);
+  const { user } = useAuthContext();
 
   const getStudents = useCallback(() => {
     setIsLoading(true);
@@ -93,7 +95,9 @@ const Students = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Students Credentials</h1>
+      <h1 className="text-2xl font-bold mb-6 text-secondary">
+        Students Credentials
+      </h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
@@ -111,7 +115,11 @@ const Students = () => {
                 Expertise
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
+              {user?.type === "admin" && (
+                <th className="border border-gray-300 p-2 text-left">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -152,31 +160,41 @@ const Students = () => {
                     <td className="border border-gray-300 p-2">
                       {student.expertise}
                     </td>
-                    <td className="border border-gray-300 p-2">
-                      {student.status}
+                    <td
+                      className={clsx("border border-gray-300 p-2", {
+                        "bg-green-500 text-white":
+                          student.status === "approved",
+                        "bg-red-500 text-white": student.status === "rejected",
+                        "bg-gray-500 text-white":
+                          student.status === "pending",
+                      })}
+                    >
+                        {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
                     </td>
-                    <td className="border border-gray-300 p-2">
-                      <div className="flex justify-center gap-2">
-                        {student.status === "pending" ||
-                        student.status === "rejected" ? (
-                          <button
-                            onClick={() => approveCredentials(student._id)}
-                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
-                          >
-                            Approve
-                          </button>
-                        ) : null}
-                        {student.status === "pending" ||
-                        student.status === "approved" ? (
-                          <button
-                            onClick={() => rejectCredentials(student._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
-                          >
-                            Reject
-                          </button>
-                        ) : null}
-                      </div>
-                    </td>
+                    {user?.type === "admin" && (
+                      <td className="border border-gray-300 p-2">
+                        <div className="flex justify-center gap-2">
+                          {student.status === "pending" ||
+                          student.status === "rejected" ? (
+                            <button
+                              onClick={() => approveCredentials(student._id)}
+                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                            >
+                              Approve
+                            </button>
+                          ) : null}
+                          {student.status === "pending" ||
+                          student.status === "approved" ? (
+                            <button
+                              onClick={() => rejectCredentials(student._id)}
+                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                            >
+                              Reject
+                            </button>
+                          ) : null}
+                        </div>
+                      </td>
+                    )}
                   </tr>
 
                   {/* Expanded Row */}
