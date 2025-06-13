@@ -1,14 +1,16 @@
 "use client";
-import { createElement, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
-import React from "react";
-import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/authContext";
+import apiFetch from "../../../utils/axios";
+import clsx from "clsx";
 
 const Authors = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authorsData, setAuthorsData] = useState<any[]>([]);
+  const { user } = useAuthContext();
 
   const getAuthors = useCallback(() => {
     setIsLoading(true);
@@ -89,7 +91,9 @@ const Authors = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Authors Credentials</h1>
+      <h1 className="text-2xl font-bold mb-6 text-secondary">
+        Authors Credentials
+      </h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
@@ -110,7 +114,11 @@ const Authors = () => {
                 Credentials
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
+              {user?.type === "admin" && (
+                <th className="border border-gray-300 p-2 text-left">
+                  Actions
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -171,31 +179,41 @@ const Authors = () => {
                         View
                       </a>
                     </td>
-                    <td className="border border-gray-300 p-2">
-                      {author.status}
+                    <td
+                      className={clsx("border border-gray-300 p-2", {
+                        "bg-green-500 text-white":
+                          author.status === "approved",
+                        "bg-red-500 text-white": author.status === "rejected",
+                        "bg-gray-500 text-white": author.status === "pending",
+                      })}
+                    >
+                      {author.status.charAt(0).toUpperCase() +
+                        author.status.slice(1)}
                     </td>
-                    <td className="border border-gray-300 p-2">
-                      <div className="flex justify-center gap-2">
-                        {author.status === "pending" ||
-                        author.status === "rejected" ? (
-                          <button
-                            onClick={() => approveCredentials(author._id)}
-                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
-                          >
-                            Approve
-                          </button>
-                        ) : null}
-                        {author.status === "pending" ||
-                        author.status === "approved" ? (
-                          <button
-                            onClick={() => rejectCredentials(author._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
-                          >
-                            Reject
-                          </button>
-                        ) : null}
-                      </div>
-                    </td>
+                    {user?.type === "admin" && (
+                      <td className="border border-gray-300 p-2">
+                        <div className="flex justify-center gap-2">
+                          {author.status === "pending" ||
+                          author.status === "rejected" ? (
+                            <button
+                              onClick={() => approveCredentials(author._id)}
+                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                            >
+                              Approve
+                            </button>
+                          ) : null}
+                          {author.status === "pending" ||
+                          author.status === "approved" ? (
+                            <button
+                              onClick={() => rejectCredentials(author._id)}
+                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                            >
+                              Reject
+                            </button>
+                          ) : null}
+                        </div>
+                      </td>
+                    )}
                   </tr>
 
                   {/* Expanded Row */}
