@@ -115,11 +115,7 @@ const Students = () => {
                 Expertise
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-              {user?.type === "admin" && (
-                <th className="border border-gray-300 p-2 text-left">
-                  Actions
-                </th>
-              )}
+              <th className="border border-gray-300 p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -165,36 +161,34 @@ const Students = () => {
                         "bg-green-500 text-white":
                           student.status === "approved",
                         "bg-red-500 text-white": student.status === "rejected",
-                        "bg-gray-500 text-white":
-                          student.status === "pending",
+                        "bg-gray-500 text-white": student.status === "pending",
                       })}
                     >
-                        {student.status.charAt(0).toUpperCase() + student.status.slice(1)}
+                      {student.status.charAt(0).toUpperCase() +
+                        student.status.slice(1)}
                     </td>
-                    {user?.type === "admin" && (
-                      <td className="border border-gray-300 p-2">
-                        <div className="flex justify-center gap-2">
-                          {student.status === "pending" ||
-                          student.status === "rejected" ? (
-                            <button
-                              onClick={() => approveCredentials(student._id)}
-                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
-                            >
-                              Approve
-                            </button>
-                          ) : null}
-                          {student.status === "pending" ||
-                          student.status === "approved" ? (
-                            <button
-                              onClick={() => rejectCredentials(student._id)}
-                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
-                            >
-                              Reject
-                            </button>
-                          ) : null}
-                        </div>
-                      </td>
-                    )}
+                    <td className="border border-gray-300 p-2">
+                      <div className="flex justify-center gap-2">
+                        {student.status === "pending" ||
+                        student.status === "rejected" ? (
+                          <button
+                            onClick={() => approveCredentials(student._id)}
+                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                          >
+                            Approve
+                          </button>
+                        ) : null}
+                        {student.status === "pending" ||
+                        student.status === "approved" ? (
+                          <button
+                            onClick={() => rejectCredentials(student._id)}
+                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                          >
+                            Reject
+                          </button>
+                        ) : null}
+                      </div>
+                    </td>
                   </tr>
 
                   {/* Expanded Row */}

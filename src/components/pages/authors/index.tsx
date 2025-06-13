@@ -114,11 +114,7 @@ const Authors = () => {
                 Credentials
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-              {user?.type === "admin" && (
-                <th className="border border-gray-300 p-2 text-left">
-                  Actions
-                </th>
-              )}
+              <th className="border border-gray-300 p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -181,8 +177,7 @@ const Authors = () => {
                     </td>
                     <td
                       className={clsx("border border-gray-300 p-2", {
-                        "bg-green-500 text-white":
-                          author.status === "approved",
+                        "bg-green-500 text-white": author.status === "approved",
                         "bg-red-500 text-white": author.status === "rejected",
                         "bg-gray-500 text-white": author.status === "pending",
                       })}
@@ -190,30 +185,28 @@ const Authors = () => {
                       {author.status.charAt(0).toUpperCase() +
                         author.status.slice(1)}
                     </td>
-                    {user?.type === "admin" && (
-                      <td className="border border-gray-300 p-2">
-                        <div className="flex justify-center gap-2">
-                          {author.status === "pending" ||
-                          author.status === "rejected" ? (
-                            <button
-                              onClick={() => approveCredentials(author._id)}
-                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
-                            >
-                              Approve
-                            </button>
-                          ) : null}
-                          {author.status === "pending" ||
-                          author.status === "approved" ? (
-                            <button
-                              onClick={() => rejectCredentials(author._id)}
-                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
-                            >
-                              Reject
-                            </button>
-                          ) : null}
-                        </div>
-                      </td>
-                    )}
+                    <td className="border border-gray-300 p-2">
+                      <div className="flex justify-center gap-2">
+                        {author.status === "pending" ||
+                        author.status === "rejected" ? (
+                          <button
+                            onClick={() => approveCredentials(author._id)}
+                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                          >
+                            Approve
+                          </button>
+                        ) : null}
+                        {author.status === "pending" ||
+                        author.status === "approved" ? (
+                          <button
+                            onClick={() => rejectCredentials(author._id)}
+                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                          >
+                            Reject
+                          </button>
+                        ) : null}
+                      </div>
+                    </td>
                   </tr>
 
                   {/* Expanded Row */}
