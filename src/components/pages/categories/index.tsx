@@ -14,7 +14,6 @@ const Categories = () => {
   const [newCategory, setNewCategory] = useState({
     name: "",
   });
-  const { user } = useAuthContext();
 
   const getCategories = useCallback(() => {
     setIsLoading(true);

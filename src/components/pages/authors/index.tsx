@@ -10,7 +10,6 @@ const Authors = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authorsData, setAuthorsData] = useState<any[]>([]);
-  const { user } = useAuthContext();
 
   const getAuthors = useCallback(() => {
     setIsLoading(true);

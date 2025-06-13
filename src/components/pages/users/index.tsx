@@ -1,12 +1,17 @@
 "use client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import clsx from "clsx";
 import { useAuthContext } from "../../../context/authContext";
+import CreateUserModal from "../CreateUserModal";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] =
+    useState<boolean>(false);
   const [usersData, setUsersData] = useState<any[]>([]);
   const { user } = useAuthContext();
 
@@ -85,7 +90,28 @@ const Users = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Users</h1>
+      <CreateUserModal
+        isOpen={isCreateUserModalOpen}
+        onClose={() => setIsCreateUserModalOpen(false)}
+        onCreated={() => {
+          setIsCreateUserModalOpen(false);
+          getUsers();
+        }}
+      />
+      <div>
+        <h1 className="text-2xl font-bold mb-6 text-secondary">Users</h1>
+        {user.type === "admin" && (
+          <div className="flex items-end justify-end mb-4">
+            <button
+              onClick={() => setIsCreateUserModalOpen(true)}
+              className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
+            >
+              <FontAwesomeIcon icon={faPlus} className="text-xs" /> Create New
+              Moderator
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">

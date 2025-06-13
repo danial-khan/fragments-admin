@@ -10,7 +10,6 @@ const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [studentsData, setStudentsData] = useState<any[]>([]);
-  const { user } = useAuthContext();
 
   const getStudents = useCallback(() => {
     setIsLoading(true);
