@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import ShowFragmentModal from "../ShowFragmentModal";
+import { toast } from "react-toastify";
 
 export interface Fragment {
   _id: string;
@@ -40,7 +41,7 @@ const Fragments: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
   const [author, setAuthor] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("published"); // default to published
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -52,10 +53,12 @@ const Fragments: React.FC = () => {
   const getAuthors = useCallback(() => {
     setIsLoading(true);
     apiFetch
-      .get("/admin/authors")
-      .then((res) => setAuthorsData(res.data.authors))
+      .get("/admin/authors/all")
+      .then((res) => {
+      setAuthorsData(res.data.authors);
+      })
       .catch(() =>
-        console.log("Something went wrong loading authors", { type: "error" })
+      console.log("Something went wrong loading authors", { type: "error" })
       )
       .finally(() => setIsLoading(false));
   }, []);
@@ -73,7 +76,58 @@ const Fragments: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  // debounce search
+  const toggleFragmentStatus = useCallback(
+    (fragmentId: string, currentStatus: string) => {
+      const newStatus = currentStatus === "published" ? "blocked" : "published";
+      let originalStatus: string | undefined;
+
+      setData((prev) => {
+        const updated = [...prev];
+        const frag = updated.find((f) => f._id === fragmentId);
+        if (frag) {
+          originalStatus = frag.status;
+          frag.status = newStatus;
+        }
+        return updated;
+      });
+
+      apiFetch
+        .post(`/admin/fragments/${newStatus}`, { fragmentId })
+        .then(() => {
+          toast(
+            `Fragment ${
+              newStatus === "blocked" ? "blocked" : "published"
+            } successfully`,
+            {
+              type: "success",
+            }
+          );
+
+          if (newStatus === "blocked" && status === "published") {
+            setData((prev) => prev.filter((f) => f._id !== fragmentId));
+          }
+          if (newStatus === "published" && status === "blocked") {
+            setData((prev) => prev.filter((f) => f._id !== fragmentId));
+          }
+        })
+        .catch(() => {
+          toast(
+            "Error while updating fragment status. Please try again later",
+            {
+              type: "error",
+            }
+          );
+          setData((prev) => {
+            const updated = [...prev];
+            const frag = updated.find((f) => f._id === fragmentId);
+            if (frag) frag.status = originalStatus || frag.status;
+            return updated;
+          });
+        });
+    },
+    [status]
+  );
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
@@ -136,10 +190,10 @@ const Fragments: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         fragment={selectedFragment}
       />
+
       <h1 className="text-2xl font-bold mb-4 text-secondary">Fragments</h1>
 
       <div className="flex flex-col md:flex-row gap-4 mb-4">
-        {/* Search */}
         <div className="relative w-full md:w-1/2">
           <FontAwesomeIcon
             icon={faSearch}
@@ -194,6 +248,7 @@ const Fragments: React.FC = () => {
           }}
           className={selectClasses}
         >
+          <option value="">All</option>
           <option value="published">Published</option>
           <option value="blocked">Blocked</option>
         </select>
@@ -219,60 +274,63 @@ const Fragments: React.FC = () => {
         <table className="w-full border-collapse border border-gray-300">
           <thead className="bg-secondary text-white">
             <tr>
-              <th className="border border-gray-300 p-2 text-left">Title</th>
-              <th className="border border-gray-300 p-2 text-left">Author</th>
-              <th className="border border-gray-300 p-2 text-left">Category</th>
-              <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">
-                Created At
-              </th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
+              <th className="border p-2 text-left">Title</th>
+              <th className="border p-2 text-left">Author</th>
+              <th className="border p-2 text-left">Category</th>
+              <th className="border p-2 text-left">Status</th>
+              <th className="border p-2 text-left">Created At</th>
+              <th className="border p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan={5} className="p-4 text-center">
+                <td colSpan={6} className="p-4 text-center">
                   Loading...
                 </td>
               </tr>
             ) : data.length ? (
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 p-2">{item.title}</td>
-                  <td className="border border-gray-300 p-2">
-                    {item.author.name}
-                  </td>
-                  <td className="border border-gray-300 p-2">
-                    {item.category.name}
-                  </td>
+                  <td className="border p-2">{item.title}</td>
+                  <td className="border p-2">{item.author.name}</td>
+                  <td className="border p-2">{item.category.name}</td>
                   <td
-                    className={clsx("border border-gray-300 p-2", {
+                    className={clsx("border p-2", {
                       "bg-green-500 text-white": item.status === "published",
                       "bg-red-500 text-white": item.status === "blocked",
                     })}
                   >
                     {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
                   </td>
-                  <td className="border border-gray-300 p-2">
+                  <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border border-gray-300 p-2 space-x-2">
+                  <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-secondary transition cursor-pointer"
+                      className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       View
                     </button>
-                    <button className="bg-red-500 text-white py-1 px-3 rounded-lg hover:bg-red-600 transition cursor-pointer">
-                      Block
+                    <button
+                      className={`py-1 px-3 rounded-lg text-white transition ${
+                        item.status === "blocked"
+                          ? "bg-green-600 hover:bg-green-700"
+                          : "bg-red-500 hover:bg-red-600"
+                      }`}
+                      onClick={() =>
+                        toggleFragmentStatus(item._id, item.status)
+                      }
+                    >
+                      {item.status === "blocked" ? "Publish" : "Block"}
                     </button>
                   </td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={5} className="p-4 text-center">
+                <td colSpan={6} className="p-4 text-center">
                   No fragments found.
                 </td>
               </tr>

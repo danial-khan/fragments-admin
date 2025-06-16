@@ -8,6 +8,7 @@ import {
   faComments,
   faUsers,
   faEye,
+  faArrowRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { Fragment } from "./fragments";
 import DOMPurify from "dompurify";
@@ -142,7 +143,16 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end p-5 border-t">
+        <div className="flex justify-between items-center p-5 border-t">
+          <a
+            href={`${usersHomePageURL}/dashboard/fragment/${fragment._id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-yellow-600 hover:underline flex items-center gap-1"
+          >
+            View Full Fragment
+            <FontAwesomeIcon icon={faArrowRight} />
+          </a>
           <button
             onClick={onClose}
             className="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-secondary transition"
