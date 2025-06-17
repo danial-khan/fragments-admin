@@ -1,12 +1,17 @@
 "use client";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState } from "react";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import clsx from "clsx";
 import { useAuthContext } from "../../../context/authContext";
+import CreateUserModal from "../CreateUserModal";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreateUserModalOpen, setIsCreateUserModalOpen] =
+    useState<boolean>(false);
   const [usersData, setUsersData] = useState<any[]>([]);
   const { user } = useAuthContext();
 
@@ -85,7 +90,28 @@ const Users = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6 text-secondary">Users</h1>
+      <CreateUserModal
+        isOpen={isCreateUserModalOpen}
+        onClose={() => setIsCreateUserModalOpen(false)}
+        onCreated={() => {
+          setIsCreateUserModalOpen(false);
+          getUsers();
+        }}
+      />
+      <div>
+        <h1 className="text-2xl font-bold mb-6 text-secondary">Users</h1>
+        {user.type === "admin" && (
+          <div className="flex items-end justify-end mb-4">
+            <button
+              onClick={() => setIsCreateUserModalOpen(true)}
+              className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
+            >
+              <FontAwesomeIcon icon={faPlus} className="text-xs" /> Create New
+              Moderator
+            </button>
+          </div>
+        )}
+      </div>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
@@ -101,12 +127,7 @@ const Users = () => {
                 Updated At
               </th>
               <th className="border border-gray-300 p-2 text-left">Status</th>
-
-              {user?.type === "admin" && (
-                <th className="border border-gray-300 p-2 text-left">
-                  Actions
-                </th>
-              )}
+              <th className="border border-gray-300 p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -121,9 +142,15 @@ const Users = () => {
                 <>
                   {/* Main Row */}
                   <tr key={userData._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2">{userData.name}</td>
-                    <td className="border border-gray-300 p-2">{userData.email}</td>
-                    <td className="border border-gray-300 p-2">{userData.type}</td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.name}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.email}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.type}
+                    </td>
                     <td className="border border-gray-300 p-2">
                       {userData.createdAt}
                     </td>
@@ -138,29 +165,27 @@ const Users = () => {
                     >
                       {userData.active ? "Active" : "Inactive"}
                     </td>
-                    {user?.type === "admin" && (
-                      <td className="border border-gray-300 py-2">
-                        <div className="flex justify-center gap-2">
-                          <>
-                            {userData.active ? (
-                              <button
-                                onClick={() => deactivateUser(userData._id)}
-                                className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
-                              >
-                                Deactivate
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => activateUser(userData._id)}
-                                className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
-                              >
-                                Activate
-                              </button>
-                            )}
-                          </>
-                        </div>
-                      </td>
-                    )}
+                    <td className="border border-gray-300 py-2">
+                      <div className="flex justify-center gap-2">
+                        <>
+                          {userData.active ? (
+                            <button
+                              onClick={() => deactivateUser(userData._id)}
+                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
+                            >
+                              Deactivate
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => activateUser(userData._id)}
+                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
+                            >
+                              Activate
+                            </button>
+                          )}
+                        </>
+                      </div>
+                    </td>
                   </tr>
                 </>
               ))

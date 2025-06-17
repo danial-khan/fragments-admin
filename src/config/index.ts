@@ -7,5 +7,9 @@ const config = {
     import.meta.env.MODE === "development"
       ? "http://localhost:3000"
       : "https://fragmenttrails.com",
+  usersHomePageURL:
+    import.meta.env.MODE === "development"
+      ? "http://localhost:5173"
+      : "https://fragmenttrails.com",
 };
 export default config;

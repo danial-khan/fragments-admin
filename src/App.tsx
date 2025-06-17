@@ -9,6 +9,8 @@ import { ToastContainer } from "react-toastify";
 import AuthContextProvider from "./context/authContext";
 import Users from "./components/pages/users";
 import Categories from "./components/pages/categories";
+import Fragments from "./components/pages/fragments";
+import Comments from "./components/pages/comments";
 
 const App = () => {
   return (
@@ -23,6 +25,8 @@ const App = () => {
             <Route path="students" Component={Students} />
             <Route path="users" Component={Users} />
             <Route path="categories" Component={Categories} />
+            <Route path="fragments" Component={Fragments} />
+            <Route path="comments" Component={Comments} />
           </Route>
         </Routes>
       </BrowserRouter>

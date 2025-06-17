@@ -14,7 +14,6 @@ const Categories = () => {
   const [newCategory, setNewCategory] = useState({
     name: "",
   });
-  const { user } = useAuthContext();
 
   const getCategories = useCallback(() => {
     setIsLoading(true);
@@ -91,35 +90,33 @@ const Categories = () => {
       <h1 className="text-2xl font-bold mb-6 text-secondary">Categories</h1>
 
       {/* Create Category Form */}
-      {user?.type === "admin" && (
-        <div className="mb-8 p-4 border border-gray-300 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Create New Category</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={newCategory.name}
-                  onChange={handleInputChange}
-                  className="w-full p-2 border border-gray-300 rounded"
-                  required
-                />
-              </div>
+      <div className="mb-8 p-4 border border-gray-300 rounded-lg">
+        <h2 className="text-xl font-semibold mb-4">Create New Category</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Name
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={newCategory.name}
+                onChange={handleInputChange}
+                className="w-full p-2 border border-gray-300 rounded"
+                required
+              />
             </div>
-            <button
-              type="submit"
-              className="bg-secondary text-white py-2 px-4 rounded hover:bg-primary-dark"
-              disabled={isCreateLoading}
-            >
-              {isCreateLoading ? "Creating..." : "Create Category"}
-            </button>
-          </form>
-        </div>
-      )}
+          </div>
+          <button
+            type="submit"
+            className="bg-secondary text-white py-2 px-4 rounded hover:bg-primary-dark"
+            disabled={isCreateLoading}
+          >
+            {isCreateLoading ? "Creating..." : "Create Category"}
+          </button>
+        </form>
+      </div>
 
       {/* Categories Table */}
       <div className="overflow-x-auto">
@@ -132,11 +129,7 @@ const Categories = () => {
               <th className="border border-gray-300 p-2 text-left">
                 Created At
               </th>
-              {user?.type === "admin" && (
-                <th className="border border-gray-300 p-2 text-left">
-                  Actions
-                </th>
-              )}
+              <th className="border border-gray-300 p-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -166,18 +159,16 @@ const Categories = () => {
                   <td className="border border-gray-300 p-2">
                     {new Date(category.createdAt).toLocaleString()}
                   </td>
-                  {user?.type === "admin" && (
-                    <td className="border border-gray-300 py-2">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => deleteCategory(category._id)}
-                          className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </td>
-                  )}
+                  <td className="border border-gray-300 py-2">
+                    <div className="flex justify-center gap-2">
+                      <button
+                        onClick={() => deleteCategory(category._id)}
+                        className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))
             )}

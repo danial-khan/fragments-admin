@@ -6,6 +6,8 @@ import {
   faUser,
   faUserGraduate,
   faUsers,
+  faLeaf,
+  faComments,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +27,9 @@ const Sidebar = () => {
       to: "/dashboard/authors",
     },
     { label: "Students Credentials", icon: faUsers, to: "/dashboard/students" },
-    { label: 'Categories', icon: faIcons, to: '/dashboard/categories' },
+    { label: "Categories", icon: faIcons, to: "/dashboard/categories" },
+    { label: "Fragments", icon: faLeaf, to: "/dashboard/fragments" },
+    { label: "Comments", icon: faComments, to: "/dashboard/comments" },
   ];
 
   const logout = useCallback(() => {
