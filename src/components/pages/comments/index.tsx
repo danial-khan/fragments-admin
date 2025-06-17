@@ -44,24 +44,24 @@ const Replies: React.FC = () => {
   const [category, setCategory] = useState("");
   const [author, setAuthor] = useState("");
   const [depth, setDepth] = useState<number | "">("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("published");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const [categoriesData, setCategoriesData] = useState<Option[]>([]);
-  const [authorsData, setAuthorsData] = useState<Option[]>([]);
+  const [usersData, setAuthorsData] = useState<Option[]>([]);
   const [selectedReply, setSelectedReply] = useState<Reply | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getAuthors = useCallback(() => {
     setIsLoading(true);
     apiFetch
-      .get("/admin/authors/all")
+      .get("/admin/users")
       .then((res) => {
-        setAuthorsData(res.data.authors);
+        setAuthorsData(res.data.users);
       })
       .catch(() =>
-        toast("Something went wrong loading authors", { type: "error" })
+        toast("Something went wrong loading users", { type: "error" })
       )
       .finally(() => setIsLoading(false));
   }, []);
@@ -77,47 +77,56 @@ const Replies: React.FC = () => {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const toggleReplyStatus = useCallback((reply: Reply) => {
-    const newStatus = reply.status === "published" ? "blocked" : "published";
-    const originalStatus = reply.status;
+  const toggleReplyStatus = useCallback(
+    (reply: Reply) => {
+      const newStatus = reply.status === "published" ? "blocked" : "published";
+      let originalStatus: string | undefined;
 
-    // setData((prev) =>
-    //   prev.map((r) => (r._id === reply._id ? { ...r, status: newStatus } : r))
-    // );
-
-    apiFetch
-      .post(`/admin/replies/${newStatus}`, {
-      fragmentId: reply.fragmentId,
-      replyId: reply._id,
-      depth: reply.depth,
-      parentReplyId: reply.parentReplyId,
-      })
-      .then(() => {
-      toast(
-        `Fragment ${
-        newStatus === "blocked" ? "blocked" : "published"
-        } successfully`,
-        {
-        type: "success",
+      setData((prev) => {
+        const updated = [...prev];
+        const target = updated.find((r) => r._id === reply._id);
+        if (target) {
+          originalStatus = target.status;
+          target.status = newStatus;
         }
-      );
-
-      // Update the status in the UI
-      setData((prev) =>
-        prev.map((r) =>
-        r._id === reply._id ? { ...r, status: newStatus } : r
-        )
-      );
-      })
-      .catch(() => {
-      toast("Error updating reply status", { type: "error" });
-      setData((prev) =>
-        prev.map((r) =>
-        r._id === reply._id ? { ...r, status: originalStatus } : r
-        )
-      );
+        return updated;
       });
-  }, []);
+
+      apiFetch
+        .post(`/admin/replies/${newStatus}`, {
+          fragmentId: reply.fragmentId,
+          replyId: reply._id,
+          depth: reply.depth,
+          parentReplyId: reply.parentReplyId,
+        })
+        .then(() => {
+          toast(
+            `Reply ${
+              newStatus === "blocked" ? "blocked" : "published"
+            } successfully`,
+            { type: "success" }
+          );
+
+          if (newStatus === "blocked" && status === "published") {
+            setData((prev) => prev.filter((r) => r._id !== reply._id));
+          }
+          if (newStatus === "published" && status === "blocked") {
+            setData((prev) => prev.filter((r) => r._id !== reply._id));
+          }
+        })
+        .catch(() => {
+          toast("Error updating reply status", { type: "error" });
+
+          setData((prev) => {
+            const updated = [...prev];
+            const target = updated.find((r) => r._id === reply._id);
+            if (target) target.status = originalStatus || target.status;
+            return updated;
+          });
+        });
+    },
+    [status]
+  );
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -198,12 +207,11 @@ const Replies: React.FC = () => {
       />
 
       <h1 className="text-2xl font-bold mb-4 text-secondary flex items-center gap-2">
-        <FontAwesomeIcon icon={faComments} />
-        Replies Management
+        Comments
       </h1>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-4 flex-wrap">
-        <div className="relative w-full md:w-1/2">
+      <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4 md:items-center">
+        <div className="relative w-full md:w-5/12">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-400 pointer-events-none"
@@ -223,7 +231,7 @@ const Replies: React.FC = () => {
             setCategory(e.target.value);
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-auto`}
         >
           <option value="">All Categories</option>
           {categoriesData.map((cat) => (
@@ -239,12 +247,12 @@ const Replies: React.FC = () => {
             setAuthor(e.target.value);
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-auto`}
         >
-          <option value="">All Authors</option>
-          {authorsData.map((auth) => (
-            <option key={auth._id} value={auth._id}>
-              {auth.name}
+          <option value="">All Users</option>
+          {usersData.map((user) => (
+            <option key={user._id} value={user._id}>
+              {user.name}
             </option>
           ))}
         </select>
@@ -255,7 +263,7 @@ const Replies: React.FC = () => {
             setDepth(e.target.value ? parseInt(e.target.value) : "");
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-auto`}
         >
           <option value="">All Depths</option>
           <option value="1">Depth 1</option>
@@ -269,7 +277,7 @@ const Replies: React.FC = () => {
             setStatus(e.target.value);
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-auto`}
         >
           <option value="">All Statuses</option>
           <option value="published">Published</option>
@@ -284,10 +292,12 @@ const Replies: React.FC = () => {
             setSortOrder(newOrder as "asc" | "desc");
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-auto`}
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>
+          <option value="depth_asc">Shallowest First</option>
+          <option value="depth_desc">Deepest First</option>
         </select>
       </div>
 
@@ -296,7 +306,7 @@ const Replies: React.FC = () => {
           <thead className="bg-secondary text-white">
             <tr>
               <th className="border p-2 text-left">Content</th>
-              <th className="border p-2 text-left">Author</th>
+              <th className="border p-2 text-left">Uer</th>
               <th className="border p-2 text-left">Fragment</th>
               <th className="border p-2 text-left">Category</th>
               <th className="border p-2 text-left">Depth</th>
