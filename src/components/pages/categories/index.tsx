@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import clsx from "clsx";
 import { cateogryColors } from "../../../utils/categories";
 import { useAuthContext } from "../../../context/authContext";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 
 const Categories = () => {
   const [isCreateLoading, setIsCreateLoading] = useState(false);
@@ -134,11 +135,7 @@ const Categories = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={4} className="text-center p-4">
-                  Loading...
-                </td>
-              </tr>
+              <TableRowSkeleton columns={5} rows={4} />
             ) : (
               categoriesData?.map((category) => (
                 <tr key={category._id} className="hover:bg-gray-50">

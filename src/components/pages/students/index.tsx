@@ -5,6 +5,7 @@ import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
 import clsx from "clsx";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 
 const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -119,11 +120,7 @@ const Students = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={7} className="text-center p-4">
-                  Loading...
-                </td>
-              </tr>
+              <TableRowSkeleton columns={7} rows={5} />
             ) : (
               studentsData?.map((student) => (
                 <>

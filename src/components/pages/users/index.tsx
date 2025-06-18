@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import clsx from "clsx";
 import { useAuthContext } from "../../../context/authContext";
 import CreateUserModal from "../CreateUserModal";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -132,11 +133,7 @@ const Users = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={7} className="text-center p-4">
-                  Loading...
-                </td>
-              </tr>
+              <TableRowSkeleton columns={7} rows={4} />
             ) : (
               usersData?.map((userData) => (
                 <>

@@ -12,6 +12,8 @@ import {
 import DOMPurify from "dompurify";
 import ShowCommentModal from "../ShowCommentModal";
 import { toast } from "react-toastify";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import SelectSkeleton from "../../skeletons/SelectSkeleton";
 
 export interface Reply {
   _id: string;
@@ -42,39 +44,41 @@ const Replies: React.FC = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [author, setAuthor] = useState("");
+  const [user, setUser] = useState("");
   const [depth, setDepth] = useState<number | "">("");
   const [status, setStatus] = useState("published");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
   const [categoriesData, setCategoriesData] = useState<Option[]>([]);
-  const [usersData, setAuthorsData] = useState<Option[]>([]);
+  const [usersData, setUsersData] = useState<Option[]>([]);
   const [selectedReply, setSelectedReply] = useState<Reply | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
-  const getAuthors = useCallback(() => {
-    setIsLoading(true);
-    apiFetch
-      .get("/admin/users")
-      .then((res) => {
-        setAuthorsData(res.data.users);
-      })
-      .catch(() =>
-        toast("Something went wrong loading users", { type: "error" })
-      )
-      .finally(() => setIsLoading(false));
+  const getUsers = useCallback(async () => {
+    setUsersLoading(true);
+    try {
+      const res = await apiFetch.get("/admin/users");
+      setUsersData(res.data.users);
+    } catch {
+      toast.error("Failed loading authors");
+    } finally {
+      setUsersLoading(false);
+    }
   }, []);
 
-  const getCategories = useCallback(() => {
-    setIsLoading(true);
-    apiFetch
-      .get("/admin/categories")
-      .then((res) => setCategoriesData(res.data))
-      .catch(() =>
-        toast("Something went wrong loading categories", { type: "error" })
-      )
-      .finally(() => setIsLoading(false));
+  const getCategories = useCallback(async () => {
+    setCategoriesLoading(true);
+    try {
+      const res = await apiFetch.get("/admin/categories");
+      setCategoriesData(res.data);
+    } catch {
+      toast.error("Failed loading categories");
+    } finally {
+      setCategoriesLoading(false);
+    }
   }, []);
 
   const toggleReplyStatus = useCallback(
@@ -147,7 +151,7 @@ const Replies: React.FC = () => {
         sortOrder,
       };
       if (category) params.category = category;
-      if (author) params.author = author;
+      if (user) params.user = user;
       if (depth) params.depth = depth;
       if (status) params.status = status;
 
@@ -164,7 +168,7 @@ const Replies: React.FC = () => {
     limit,
     debouncedSearch,
     category,
-    author,
+    user,
     depth,
     status,
     sortBy,
@@ -172,10 +176,10 @@ const Replies: React.FC = () => {
   ]);
 
   useEffect(() => {
-    getAuthors();
+    getUsers();
     getCategories();
     fetchData();
-  }, [getAuthors, getCategories, fetchData]);
+  }, [getUsers, getCategories, fetchData]);
 
   const handleView = (reply: Reply) => {
     setSelectedReply(reply);
@@ -225,37 +229,45 @@ const Replies: React.FC = () => {
           />
         </div>
 
-        <select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-          className={`${selectClasses} w-full md:w-auto`}
-        >
-          <option value="">All Categories</option>
-          {categoriesData.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+        {categoriesLoading ? (
+          <SelectSkeleton />
+        ) : (
+          <select
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
+            className={`${selectClasses} w-full md:w-auto`}
+          >
+            <option value="">All Categories</option>
+            {categoriesData.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        )}
 
-        <select
-          value={author}
-          onChange={(e) => {
-            setAuthor(e.target.value);
-            setPage(1);
-          }}
-          className={`${selectClasses} w-full md:w-auto`}
-        >
-          <option value="">All Users</option>
-          {usersData.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.name}
-            </option>
-          ))}
-        </select>
+        {usersLoading ? (
+          <SelectSkeleton />
+        ) : (
+          <select
+            value={user}
+            onChange={(e) => {
+              setUser(e.target.value);
+              setPage(1);
+            }}
+            className={`${selectClasses} w-full md:w-auto`}
+          >
+            <option value="">All Users</option>
+            {usersData.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <select
           value={depth}
@@ -317,12 +329,8 @@ const Replies: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={8} className="p-4 text-center">
-                  Loading...
-                </td>
-              </tr>
-            ) : data.length ? (
+              <TableRowSkeleton columns={6} rows={limit} />
+            ) : data.length > 0 ? (
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   <td
@@ -376,7 +384,7 @@ const Replies: React.FC = () => {
             ) : (
               <tr>
                 <td colSpan={8} className="p-4 text-center">
-                  No replies found
+                  No comments found
                 </td>
               </tr>
             )}

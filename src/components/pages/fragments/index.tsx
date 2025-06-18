@@ -3,9 +3,12 @@ import React, { useEffect, useState, useCallback } from "react";
 import apiFetch from "../../../utils/axios";
 import clsx from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import ShowFragmentModal from "../ShowFragmentModal";
 import { toast } from "react-toastify";
+import Loader from "../../Loader";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import SelectSkeleton from "../../skeletons/SelectSkeleton";
 
 export interface Fragment {
   _id: string;
@@ -13,16 +16,7 @@ export interface Fragment {
   author: { _id: string; name: string };
   category: { _id: string; name: string };
   status: string;
-  description?: string;
-  content?: string;
-  tags?: string[];
-  upvotes?: string[];
-  downvotes?: string[];
-  replies?: string[];
-  viewCount?: number;
-  subscriptionCount: number;
   createdAt: string;
-  updatedAt?: string;
 }
 
 interface Option {
@@ -41,7 +35,7 @@ const Fragments: React.FC = () => {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
   const [author, setAuthor] = useState("");
-  const [status, setStatus] = useState("published"); // default to published
+  const [status, setStatus] = useState("published");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
@@ -49,80 +43,70 @@ const Fragments: React.FC = () => {
   const [authorsData, setAuthorsData] = useState<Option[]>([]);
   const [selectedFragment, setSelectedFragment] = useState<Fragment>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [authorsLoading, setAuthorsLoading] = useState(false);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
 
-  const getAuthors = useCallback(() => {
-    setIsLoading(true);
-    apiFetch
-      .get("/admin/authors/all")
-      .then((res) => {
+
+  const getAuthors = useCallback(async () => {
+    setAuthorsLoading(true);
+    try {
+      const res = await apiFetch.get("/admin/authors/all");
       setAuthorsData(res.data.authors);
-      })
-      .catch(() =>
-      console.log("Something went wrong loading authors", { type: "error" })
-      )
-      .finally(() => setIsLoading(false));
+    } catch {
+      toast.error("Failed loading authors");
+    } finally {
+      setAuthorsLoading(false);
+    }
   }, []);
 
-  const getCategories = useCallback(() => {
-    setIsLoading(true);
-    apiFetch
-      .get("/admin/categories")
-      .then((res) => setCategoriesData(res.data))
-      .catch(() =>
-        console.log("Something went wrong loading categories", {
-          type: "error",
-        })
-      )
-      .finally(() => setIsLoading(false));
+  const getCategories = useCallback(async () => {
+    setCategoriesLoading(true);
+    try {
+      const res = await apiFetch.get("/admin/categories");
+      setCategoriesData(res.data);
+    } catch {
+      toast.error("Failed loading categories");
+    } finally {
+      setCategoriesLoading(false);
+    }
   }, []);
+  
 
   const toggleFragmentStatus = useCallback(
     (fragmentId: string, currentStatus: string) => {
       const newStatus = currentStatus === "published" ? "blocked" : "published";
-      let originalStatus: string | undefined;
+      let prevStatus: string | undefined;
 
-      setData((prev) => {
-        const updated = [...prev];
-        const frag = updated.find((f) => f._id === fragmentId);
-        if (frag) {
-          originalStatus = frag.status;
-          frag.status = newStatus;
-        }
-        return updated;
-      });
+      setData((prev) =>
+        prev.map((f) => {
+          if (f._id === fragmentId) {
+            prevStatus = f.status;
+            return { ...f, status: newStatus };
+          }
+          return f;
+        })
+      );
 
       apiFetch
         .post(`/admin/fragments/${newStatus}`, { fragmentId })
         .then(() => {
-          toast(
-            `Fragment ${
-              newStatus === "blocked" ? "blocked" : "published"
-            } successfully`,
-            {
-              type: "success",
-            }
-          );
-
-          if (newStatus === "blocked" && status === "published") {
-            setData((prev) => prev.filter((f) => f._id !== fragmentId));
-          }
-          if (newStatus === "published" && status === "blocked") {
+          toast.success(`Fragment ${newStatus} successfully`);
+          if (
+            (newStatus === "blocked" && status === "published") ||
+            (newStatus === "published" && status === "blocked")
+          ) {
             setData((prev) => prev.filter((f) => f._id !== fragmentId));
           }
         })
         .catch(() => {
-          toast(
-            "Error while updating fragment status. Please try again later",
-            {
-              type: "error",
-            }
+          toast.error("Error updating status");
+          setData((prev) =>
+            prev.map((f) =>
+              f._id === fragmentId
+                ? { ...f, status: prevStatus || f.status }
+                : f
+            )
           );
-          setData((prev) => {
-            const updated = [...prev];
-            const frag = updated.find((f) => f._id === fragmentId);
-            if (frag) frag.status = originalStatus || frag.status;
-            return updated;
-          });
         });
     },
     [status]
@@ -154,7 +138,7 @@ const Fragments: React.FC = () => {
       setData(res.data.fragments);
       setTotalPages(res.data.pages);
     } catch (err: any) {
-      console.log(err.message || "Error fetching fragments", { type: "error" });
+      toast.error(err.message || "Error fetching fragments");
     } finally {
       setIsLoading(false);
     }
@@ -175,6 +159,7 @@ const Fragments: React.FC = () => {
     fetchData();
   }, [getAuthors, getCategories, fetchData]);
 
+  // Open view modal
   const handleView = (frag: Fragment) => {
     setSelectedFragment(frag);
     setIsModalOpen(true);
@@ -184,7 +169,7 @@ const Fragments: React.FC = () => {
     "px-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none";
 
   return (
-    <div className="p-4">
+    <div className="p-4 relative">
       <ShowFragmentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -207,38 +192,45 @@ const Fragments: React.FC = () => {
             className="w-full pl-12 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
+        {categoriesLoading ? (
+          <SelectSkeleton />
+        ) : (
+          <select
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setPage(1);
+            }}
+            className={selectClasses}
+          >
+            <option value="">Select a category</option>
+            {categoriesData.map((cat) => (
+              <option key={cat._id} value={cat._id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        )}
 
-        <select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setPage(1);
-          }}
-          className={selectClasses}
-        >
-          <option value="">Select a category</option>
-          {categoriesData.map((cat) => (
-            <option key={cat._id} value={cat._id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
-
-        <select
-          value={author}
-          onChange={(e) => {
-            setAuthor(e.target.value);
-            setPage(1);
-          }}
-          className={selectClasses}
-        >
-          <option value="">Select a author</option>
-          {authorsData.map((auth) => (
-            <option key={auth._id} value={auth._id}>
-              {auth.name}
-            </option>
-          ))}
-        </select>
+        {authorsLoading ? (
+          <SelectSkeleton />
+        ) : (
+          <select
+            value={author}
+            onChange={(e) => {
+              setAuthor(e.target.value);
+              setPage(1);
+            }}
+            className={selectClasses}
+          >
+            <option value="">Select an author</option>
+            {authorsData.map((auth) => (
+              <option key={auth._id} value={auth._id}>
+                {auth.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <select
           value={status}
@@ -252,7 +244,6 @@ const Fragments: React.FC = () => {
           <option value="published">Published</option>
           <option value="blocked">Blocked</option>
         </select>
-
         <select
           value={`${sortBy}_${sortOrder}`}
           onChange={(e) => {
@@ -284,12 +275,8 @@ const Fragments: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <tr>
-                <td colSpan={6} className="p-4 text-center">
-                  Loading...
-                </td>
-              </tr>
-            ) : data.length ? (
+              <TableRowSkeleton columns={6} rows={limit} />
+            ) : data.length > 0 ? (
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   <td className="border p-2">{item.title}</td>
@@ -330,7 +317,7 @@ const Fragments: React.FC = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="p-4 text-center">
+                <td colSpan={6} className="p-4 text-center text-gray-500">
                   No fragments found.
                 </td>
               </tr>
