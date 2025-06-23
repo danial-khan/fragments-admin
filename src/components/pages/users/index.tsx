@@ -1,20 +1,24 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import clsx from "clsx";
 import { useAuthContext } from "../../../context/authContext";
 import CreateUserModal from "../CreateUserModal";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import useDotLoader from "../../../hooks/useDotLoader";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] =
     useState<boolean>(false);
   const [usersData, setUsersData] = useState<any[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
   const { user } = useAuthContext();
+  const dots = useDotLoader(!!deletingUserId);
 
   const getUsers = useCallback(() => {
     setIsLoading(true);
@@ -85,6 +89,30 @@ const Users = () => {
       });
   };
 
+  const deleteUser = (userId: string) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    setDeletingUserId(userId);
+
+    startTransition(() => {
+      apiFetch
+        .delete(`/admin/users/${userId}`)
+        .then(() => {
+          toast("User deleted successfully", { type: "success" });
+          setUsersData((users) => users.filter((u) => u._id !== userId));
+        })
+        .catch(() => {
+          toast("Error deleting user. Please try again later.", {
+            type: "error",
+          });
+          getUsers(); // fallback to refresh list
+        })
+        .finally(() => {
+          setDeletingUserId(null);
+        });
+    });
+  };
+
   useEffect(() => {
     getUsers();
   }, [getUsers]);
@@ -135,57 +163,74 @@ const Users = () => {
             {isLoading ? (
               <TableRowSkeleton columns={7} rows={4} />
             ) : (
-              usersData?.map((userData) => (
-                <>
-                  {/* Main Row */}
-                  <tr key={userData._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 p-2">
-                      {userData.name}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {userData.email}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {userData.type}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {userData.createdAt}
-                    </td>
-                    <td className="border border-gray-300 p-2">
-                      {userData.updatedAt}
-                    </td>
-                    <td
-                      className={clsx("px-2", {
-                        "bg-green-500 text-white": userData.active,
-                        "bg-red-500 text-white": !userData.active,
-                      })}
-                    >
-                      {userData.active ? "Active" : "Inactive"}
-                    </td>
-                    <td className="border border-gray-300 py-2">
-                      <div className="flex justify-center gap-2">
-                        <>
-                          {userData.active ? (
+              usersData?.map((userData) => {
+                return (
+                  <>
+                    <tr key={userData._id} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 p-2">
+                        {userData.name}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {userData.email}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {userData.type}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {userData.createdAt}
+                      </td>
+                      <td className="border border-gray-300 p-2">
+                        {userData.updatedAt}
+                      </td>
+                      <td
+                        className={clsx("px-2", {
+                          "bg-green-500 text-white": userData.active,
+                          "bg-red-500 text-white": !userData.active,
+                        })}
+                      >
+                        {userData.active ? "Active" : "Inactive"}
+                      </td>
+                      <td className="border border-gray-300 py-2">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            onClick={() =>
+                              userData.active
+                                ? deactivateUser(userData._id)
+                                : activateUser(userData._id)
+                            }
+                            className={clsx(
+                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300 w-[110px]",
+                              userData.active
+                                ? "bg-red-500 hover:bg-green-600"
+                                : "bg-green-500 hover:bg-red-600"
+                            )}
+                          >
+                            {userData.active ? "Deactivate" : "Activate"}
+                          </button>
+
+                          {user.type === "admin" && (
                             <button
-                              onClick={() => deactivateUser(userData._id)}
-                              className="bg-red-500 text-white py-2 rounded-lg hover:bg-green-600 px-2"
+                              onClick={() => deleteUser(userData._id)}
+                              disabled={deletingUserId === userData._id}
+                              className={clsx(
+                                "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                                deletingUserId === userData._id
+                                  ? "bg-gray-500 cursor-not-allowed"
+                                  : "bg-gray-700 hover:bg-gray-900"
+                              )}
+                              style={{ width: "100px" }}
                             >
-                              Deactivate
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => activateUser(userData._id)}
-                              className="bg-green-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
-                            >
-                              Activate
+                              {deletingUserId === userData._id
+                                ? `Deleting${dots}`
+                                : "Delete"}
                             </button>
                           )}
-                        </>
-                      </div>
-                    </td>
-                  </tr>
-                </>
-              ))
+                        </div>
+                      </td>
+                    </tr>
+                  </>
+                );
+              })
             )}
             {!isLoading && !usersData.length ? (
               <tr>

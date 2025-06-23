@@ -6,11 +6,17 @@ import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
 import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import useDotLoader from "../../../hooks/useDotLoader";
 
 const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [studentsData, setStudentsData] = useState<any[]>([]);
+  const [deletingStudentId, setDeletingStudentId] = useState<string | null>(
+    null
+  );
+  const dots = useDotLoader(!!deletingStudentId);
+  const { user } = useAuthContext();
 
   const getStudents = useCallback(() => {
     setIsLoading(true);
@@ -84,6 +90,30 @@ const Students = () => {
         });
       });
   }, []);
+
+  const deleteStudent = (studentId: string) => {
+    if (!confirm("Are you sure you want to delete this student?")) return;
+
+    setDeletingStudentId(studentId);
+
+    apiFetch
+      .delete(`/admin/students/${studentId}`)
+      .then(() => {
+        toast("Student deleted successfully", { type: "success" });
+        setStudentsData((students) =>
+          students.filter((s) => s._id !== studentId)
+        );
+      })
+      .catch(() => {
+        toast("Error deleting student. Please try again later.", {
+          type: "error",
+        });
+        getStudents();
+      })
+      .finally(() => {
+        setDeletingStudentId(null);
+      });
+  };
 
   useEffect(() => {
     getStudents();
@@ -165,24 +195,42 @@ const Students = () => {
                     </td>
                     <td className="border border-gray-300 p-2">
                       <div className="flex justify-center gap-2">
-                        {student.status === "pending" ||
-                        student.status === "rejected" ? (
+                        {(student.status === "pending" ||
+                          student.status === "rejected") && (
                           <button
                             onClick={() => approveCredentials(student._id)}
                             className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
                           >
                             Approve
                           </button>
-                        ) : null}
-                        {student.status === "pending" ||
-                        student.status === "approved" ? (
+                        )}
+                        {(student.status === "pending" ||
+                          student.status === "approved") && (
                           <button
                             onClick={() => rejectCredentials(student._id)}
                             className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
                           >
                             Reject
                           </button>
-                        ) : null}
+                        )}
+
+                        {user.type === "admin" && (
+                          <button
+                            onClick={() => deleteStudent(student._id)}
+                            disabled={deletingStudentId === student._id}
+                            className={clsx(
+                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                              deletingStudentId === student._id
+                                ? "bg-gray-500 cursor-not-allowed"
+                                : "bg-gray-700 hover:bg-gray-900"
+                            )}
+                            style={{ width: "100px" }}
+                          >
+                            {deletingStudentId === student._id
+                              ? `Deleting${dots}`
+                              : "Delete"}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

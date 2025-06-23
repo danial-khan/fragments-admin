@@ -6,11 +6,15 @@ import { useAuthContext } from "../../../context/authContext";
 import apiFetch from "../../../utils/axios";
 import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import useDotLoader from "../../../hooks/useDotLoader";
 
 const Authors = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [authorsData, setAuthorsData] = useState<any[]>([]);
+  const [deletingAuthorId, setDeletingAuthorId] = useState<string | null>(null);
+  const dots = useDotLoader(!!deletingAuthorId);
+  const { user } = useAuthContext();
 
   const getAuthors = useCallback(() => {
     setIsLoading(true);
@@ -80,6 +84,28 @@ const Authors = () => {
         });
       });
   }, []);
+
+  const deleteAuthor = (authorId: string) => {
+    if (!confirm("Are you sure you want to delete this author?")) return;
+
+    setDeletingAuthorId(authorId);
+
+    apiFetch
+      .delete(`/admin/authors/${authorId}`)
+      .then(() => {
+        toast("Author deleted successfully", { type: "success" });
+        setAuthorsData((authors) => authors.filter((a) => a._id !== authorId));
+      })
+      .catch(() => {
+        toast("Error deleting author. Please try again later.", {
+          type: "error",
+        });
+        getAuthors();
+      })
+      .finally(() => {
+        setDeletingAuthorId(null);
+      });
+  };
 
   useEffect(() => {
     getAuthors();
@@ -183,24 +209,42 @@ const Authors = () => {
                     </td>
                     <td className="border border-gray-300 p-2">
                       <div className="flex justify-center gap-2">
-                        {author.status === "pending" ||
-                        author.status === "rejected" ? (
+                        {(author.status === "pending" ||
+                          author.status === "rejected") && (
                           <button
                             onClick={() => approveCredentials(author._id)}
                             className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
                           >
                             Approve
                           </button>
-                        ) : null}
-                        {author.status === "pending" ||
-                        author.status === "approved" ? (
+                        )}
+                        {(author.status === "pending" ||
+                          author.status === "approved") && (
                           <button
                             onClick={() => rejectCredentials(author._id)}
                             className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
                           >
                             Reject
                           </button>
-                        ) : null}
+                        )}
+
+                        {user.type === "admin" && (
+                          <button
+                            onClick={() => deleteAuthor(author._id)}
+                            disabled={deletingAuthorId === author._id}
+                            className={clsx(
+                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                              deletingAuthorId === author._id
+                                ? "bg-gray-500 cursor-not-allowed"
+                                : "bg-gray-700 hover:bg-gray-900"
+                            )}
+                            style={{ width: "100px" }}
+                          >
+                            {deletingAuthorId === author._id
+                              ? `Deleting${dots}`
+                              : "Delete"}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
