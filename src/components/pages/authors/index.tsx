@@ -233,7 +233,7 @@ const Authors = () => {
                             onClick={() => deleteAuthor(author._id)}
                             disabled={deletingAuthorId === author._id}
                             className={clsx(
-                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                              "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300",
                               deletingAuthorId === author._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"

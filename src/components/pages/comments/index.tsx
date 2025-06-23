@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useTransition } from "react";
 import apiFetch from "../../../utils/axios";
 import clsx from "clsx";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,8 @@ import ShowCommentModal from "../ShowCommentModal";
 import { toast } from "react-toastify";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import SelectSkeleton from "../../skeletons/SelectSkeleton";
+import { useAuthContext } from "../../../context/authContext";
+import useDotLoader from "../../../hooks/useDotLoader";
 
 export interface Reply {
   _id: string;
@@ -41,10 +43,15 @@ const Replies: React.FC = () => {
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
 
+    const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
+    const [isPending, startTransition] = useTransition();
+    const { user } = useAuthContext();
+    const dots = useDotLoader(!!deletingReplyId);
+
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [category, setCategory] = useState("");
-  const [user, setUser] = useState("");
+  const [userList, setUserList] = useState("");
   const [depth, setDepth] = useState<number | "">("");
   const [status, setStatus] = useState("published");
   const [sortBy, setSortBy] = useState("createdAt");
@@ -151,7 +158,7 @@ const Replies: React.FC = () => {
         sortOrder,
       };
       if (category) params.category = category;
-      if (user) params.user = user;
+      if (userList) params.userList = userList;
       if (depth) params.depth = depth;
       if (status) params.status = status;
 
@@ -168,7 +175,7 @@ const Replies: React.FC = () => {
     limit,
     debouncedSearch,
     category,
-    user,
+    userList,
     depth,
     status,
     sortBy,
@@ -197,6 +204,32 @@ const Replies: React.FC = () => {
       default:
         return faComment;
     }
+  };
+
+  const deleteReply = (reply: Reply) => {
+    if (!confirm("Are you sure you want to delete this reply?")) return;
+
+    setDeletingReplyId(reply._id);
+
+    startTransition(() => {
+        apiFetch
+          .delete(`/admin/replies/${reply._id}`, {
+            data: { fragmentId: reply.fragmentId }
+          })
+          .then(() => {
+            toast.success("Fragment deleted successfully");
+            setData((prev) => prev.filter((r) => r._id !== reply._id));
+          })
+          .catch(() => {
+            toast("Error deleting user. Please try again later.", {
+              type: "error",
+            });
+            fetchData();
+          })
+          .finally(() => {
+            setDeletingReplyId(null);
+          });
+    });
   };
 
   const selectClasses =
@@ -253,17 +286,17 @@ const Replies: React.FC = () => {
           <SelectSkeleton />
         ) : (
           <select
-            value={user}
+            value={userList}
             onChange={(e) => {
-              setUser(e.target.value);
+              setUserList(e.target.value);
               setPage(1);
             }}
             className={`${selectClasses} w-full md:w-auto`}
           >
             <option value="">All Users</option>
-            {usersData.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.name}
+            {usersData.map((userData) => (
+              <option key={userData._id} value={userData._id}>
+                {userData.name}
               </option>
             ))}
           </select>
@@ -318,7 +351,7 @@ const Replies: React.FC = () => {
           <thead className="bg-secondary text-white">
             <tr>
               <th className="border p-2 text-left">Content</th>
-              <th className="border p-2 text-left">Uer</th>
+              <th className="border p-2 text-left">User</th>
               <th className="border p-2 text-left">Fragment</th>
               <th className="border p-2 text-left">Category</th>
               <th className="border p-2 text-left">Depth</th>
@@ -329,7 +362,7 @@ const Replies: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <TableRowSkeleton columns={6} rows={limit} />
+              <TableRowSkeleton columns={8} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
@@ -369,7 +402,7 @@ const Replies: React.FC = () => {
                       View
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white transition ${
+                      className={`py-1 px-3 rounded-lg text-white transition w-[80px] ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -378,6 +411,23 @@ const Replies: React.FC = () => {
                     >
                       {item.status === "blocked" ? "Publish" : "Block"}
                     </button>
+                    {user.type === "admin" && (
+                      <button
+                        onClick={() => deleteReply(item)}
+                        disabled={deletingReplyId === item._id}
+                        className={clsx(
+                          "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                          deletingReplyId === item._id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
+                        )}
+                        style={{ width: "100px" }}
+                      >
+                        {deletingReplyId === item._id
+                          ? `Deleting${dots}`
+                          : "Delete"}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

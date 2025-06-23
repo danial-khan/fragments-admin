@@ -1,14 +1,15 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
-import apiFetch from "../../../utils/axios";
-import clsx from "clsx";
+import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faSpinner } from "@fortawesome/free-solid-svg-icons";
-import ShowFragmentModal from "../ShowFragmentModal";
+import clsx from "clsx";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { toast } from "react-toastify";
-import Loader from "../../Loader";
-import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import apiFetch from "../../../utils/axios";
 import SelectSkeleton from "../../skeletons/SelectSkeleton";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import ShowFragmentModal from "../ShowFragmentModal";
+import { useAuthContext } from "../../../context/authContext";
+import useDotLoader from "../../../hooks/useDotLoader";
 
 export interface Fragment {
   _id: string;
@@ -30,6 +31,12 @@ const Fragments: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [deletingFragmentId, setDeletingFragmentId] = useState<string | null>(
+    null
+  );
+  const [isPending, startTransition] = useTransition();
+  const { user } = useAuthContext();
+  const dots = useDotLoader(!!deletingFragmentId);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -45,7 +52,6 @@ const Fragments: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [authorsLoading, setAuthorsLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
-
 
   const getAuthors = useCallback(async () => {
     setAuthorsLoading(true);
@@ -70,7 +76,6 @@ const Fragments: React.FC = () => {
       setCategoriesLoading(false);
     }
   }, []);
-  
 
   const toggleFragmentStatus = useCallback(
     (fragmentId: string, currentStatus: string) => {
@@ -152,6 +157,30 @@ const Fragments: React.FC = () => {
     sortBy,
     sortOrder,
   ]);
+
+  const deleteFragment = (fragmentId: string) => {
+    if (!confirm("Are you sure you want to delete this fragment?")) return;
+
+    setDeletingFragmentId(fragmentId);
+
+    startTransition(() => {
+      apiFetch
+        .delete(`/admin/fragments/${fragmentId}`)
+        .then(() => {
+          toast.success("Fragment deleted successfully");
+          setData((prev) => prev.filter((f) => f._id !== fragmentId));
+        })
+        .catch(() => {
+          toast("Error deleting user. Please try again later.", {
+            type: "error",
+          });
+          fetchData();
+        })
+        .finally(() => {
+          setDeletingFragmentId(null);
+        });
+    });
+  };
 
   useEffect(() => {
     getAuthors();
@@ -301,7 +330,7 @@ const Fragments: React.FC = () => {
                       View
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white transition ${
+                      className={`py-1 px-3 rounded-lg text-white transition w-[80px] ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -312,6 +341,23 @@ const Fragments: React.FC = () => {
                     >
                       {item.status === "blocked" ? "Publish" : "Block"}
                     </button>
+                    {user.type === "admin" && (
+                      <button
+                        onClick={() => deleteFragment(item._id)}
+                        disabled={deletingFragmentId === item._id}
+                        className={clsx(
+                          "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300",
+                          deletingFragmentId === item._id
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
+                        )}
+                        style={{ width: "100px" }}
+                      >
+                        {deletingFragmentId === item._id
+                          ? `Deleting${dots}`
+                          : "Delete"}
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))

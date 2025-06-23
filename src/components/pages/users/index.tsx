@@ -105,7 +105,7 @@ const Users = () => {
           toast("Error deleting user. Please try again later.", {
             type: "error",
           });
-          getUsers(); // fallback to refresh list
+          getUsers();
         })
         .finally(() => {
           setDeletingUserId(null);
@@ -199,7 +199,7 @@ const Users = () => {
                                 : activateUser(userData._id)
                             }
                             className={clsx(
-                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300 w-[110px]",
+                              "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300 w-[110px]",
                               userData.active
                                 ? "bg-red-500 hover:bg-green-600"
                                 : "bg-green-500 hover:bg-red-600"
