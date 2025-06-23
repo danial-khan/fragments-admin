@@ -16,6 +16,7 @@ import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import SelectSkeleton from "../../skeletons/SelectSkeleton";
 import { useAuthContext } from "../../../context/authContext";
 import useDotLoader from "../../../hooks/useDotLoader";
+import useDebounce from "../../../hooks/useDebounce";
 
 export interface Reply {
   _id: string;
@@ -42,11 +43,13 @@ const Replies: React.FC = () => {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [fragmentId, setFragmentId] = useState<string>("");
+  const debouncedFragmentId = useDebounce(fragmentId, 500);
 
-    const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
-    const [isPending, startTransition] = useTransition();
-    const { user } = useAuthContext();
-    const dots = useDotLoader(!!deletingReplyId);
+  const [deletingReplyId, setDeletingReplyId] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const { user } = useAuthContext();
+  const dots = useDotLoader(!!deletingReplyId);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -159,6 +162,7 @@ const Replies: React.FC = () => {
       };
       if (category) params.category = category;
       if (userList) params.userList = userList;
+      if (debouncedFragmentId) params.fragmentId = debouncedFragmentId;
       if (depth) params.depth = depth;
       if (status) params.status = status;
 
@@ -174,6 +178,7 @@ const Replies: React.FC = () => {
     page,
     limit,
     debouncedSearch,
+    debouncedFragmentId,
     category,
     userList,
     depth,
@@ -248,7 +253,7 @@ const Replies: React.FC = () => {
       </h1>
 
       <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4 md:items-center">
-        <div className="relative w-full md:w-5/12">
+        <div className="relative w-full md:w-1/4">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-400 pointer-events-none"
@@ -259,6 +264,19 @@ const Replies: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+          />
+        </div>
+
+        <div className="relative w-full md:w-2/12">
+          <input
+            type="text"
+            placeholder="Fragment ID..."
+            value={fragmentId}
+            onChange={(e) => {
+              setFragmentId(e.target.value);
+              setPage(1);
+            }}
+            className="w-full pl-4 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
 

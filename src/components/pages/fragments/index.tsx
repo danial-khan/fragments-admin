@@ -10,6 +10,7 @@ import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import ShowFragmentModal from "../ShowFragmentModal";
 import { useAuthContext } from "../../../context/authContext";
 import useDotLoader from "../../../hooks/useDotLoader";
+import useDebounce from "../../../hooks/useDebounce";
 
 export interface Fragment {
   _id: string;
@@ -37,6 +38,8 @@ const Fragments: React.FC = () => {
   const [isPending, startTransition] = useTransition();
   const { user } = useAuthContext();
   const dots = useDotLoader(!!deletingFragmentId);
+  const [fragmentId, setFragmentId] = useState("");
+  const debouncedFragmentId = useDebounce(fragmentId, 500);
 
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -138,6 +141,7 @@ const Fragments: React.FC = () => {
       if (category) params.category = category;
       if (author) params.author = author;
       if (status) params.status = status;
+      if (debouncedFragmentId) params.fragmentId = debouncedFragmentId;
 
       const res = await apiFetch.get("/admin/fragments", { params });
       setData(res.data.fragments);
@@ -151,6 +155,7 @@ const Fragments: React.FC = () => {
     page,
     limit,
     debouncedSearch,
+    debouncedFragmentId,
     category,
     author,
     status,
@@ -219,6 +224,18 @@ const Fragments: React.FC = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-12 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+          />
+        </div>
+        <div className="relative w-full md:w-2/12">
+          <input
+            type="text"
+            placeholder="Fragment ID..."
+            value={fragmentId}
+            onChange={(e) => {
+              setFragmentId(e.target.value);
+              setPage(1);
+            }}
+            className="w-full pl-4 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
         {categoriesLoading ? (
