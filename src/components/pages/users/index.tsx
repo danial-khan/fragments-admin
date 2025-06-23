@@ -2,9 +2,10 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState, useTransition } from "react";
+import { Link } from "react-router-dom";
+import clsx from "clsx";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
-import clsx from "clsx";
 import { useAuthContext } from "../../../context/authContext";
 import CreateUserModal from "../CreateUserModal";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
@@ -165,70 +166,68 @@ const Users = () => {
             ) : (
               usersData?.map((userData) => {
                 return (
-                  <>
-                    <tr key={userData._id} className="hover:bg-gray-50">
-                      <td className="border border-gray-300 p-2">
-                        {userData.name}
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {userData.email}
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {userData.type}
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {userData.createdAt}
-                      </td>
-                      <td className="border border-gray-300 p-2">
-                        {userData.updatedAt}
-                      </td>
-                      <td
-                        className={clsx("px-2", {
-                          "bg-green-500 text-white": userData.active,
-                          "bg-red-500 text-white": !userData.active,
-                        })}
-                      >
-                        {userData.active ? "Active" : "Inactive"}
-                      </td>
-                      <td className="border border-gray-300 py-2">
-                        <div className="flex justify-center gap-2">
-                          <button
-                            onClick={() =>
-                              userData.active
-                                ? deactivateUser(userData._id)
-                                : activateUser(userData._id)
-                            }
-                            className={clsx(
-                              "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300 w-[110px]",
-                              userData.active
-                                ? "bg-red-500 hover:bg-green-600"
-                                : "bg-green-500 hover:bg-red-600"
-                            )}
-                          >
-                            {userData.active ? "Deactivate" : "Activate"}
-                          </button>
-
-                          {user.type === "admin" && (
-                            <button
-                              onClick={() => deleteUser(userData._id)}
-                              disabled={deletingUserId === userData._id}
-                              className={clsx(
-                                "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
-                                deletingUserId === userData._id
-                                  ? "bg-gray-500 cursor-not-allowed"
-                                  : "bg-gray-700 hover:bg-gray-900"
-                              )}
-                              style={{ width: "100px" }}
-                            >
-                              {deletingUserId === userData._id
-                                ? `Deleting${dots}`
-                                : "Delete"}
-                            </button>
+                  <tr key={userData._id} className="hover:bg-gray-50">
+                    <td className="border border-gray-300 p-2 cursor-pointer hover:underline">
+                      <Link to={`${userData._id}`}>{userData.name}</Link>
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.email}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.type}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.createdAt}
+                    </td>
+                    <td className="border border-gray-300 p-2">
+                      {userData.updatedAt}
+                    </td>
+                    <td
+                      className={clsx("px-2", {
+                        "bg-green-500 text-white": userData.active,
+                        "bg-red-500 text-white": !userData.active,
+                      })}
+                    >
+                      {userData.active ? "Active" : "Inactive"}
+                    </td>
+                    <td className="border border-gray-300 py-2">
+                      <div className="flex justify-center gap-2">
+                        <button
+                          onClick={() =>
+                            userData.active
+                              ? deactivateUser(userData._id)
+                              : activateUser(userData._id)
+                          }
+                          className={clsx(
+                            "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300 w-[110px]",
+                            userData.active
+                              ? "bg-red-500 hover:bg-green-600"
+                              : "bg-green-500 hover:bg-red-600"
                           )}
-                        </div>
-                      </td>
-                    </tr>
-                  </>
+                        >
+                          {userData.active ? "Deactivate" : "Activate"}
+                        </button>
+
+                        {user.type === "admin" && (
+                          <button
+                            onClick={() => deleteUser(userData._id)}
+                            disabled={deletingUserId === userData._id}
+                            className={clsx(
+                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                              deletingUserId === userData._id
+                                ? "bg-gray-500 cursor-not-allowed"
+                                : "bg-gray-700 hover:bg-gray-900"
+                            )}
+                            style={{ width: "100px" }}
+                          >
+                            {deletingUserId === userData._id
+                              ? `Deleting${dots}`
+                              : "Delete"}
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
                 );
               })
             )}
