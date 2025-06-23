@@ -12,6 +12,8 @@ import { Reply } from "../pages/comments/index";
 import DOMPurify from "dompurify";
 import usersHomePageURL from "../../config/index";
 import clsx from "clsx";
+import { Link } from "react-router-dom";
+import { generateInitials, generatePastelColor } from "../../utils/avatarUtils";
 
 interface ShowCommentModalProps {
   isOpen: boolean;
@@ -77,9 +79,29 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
         <div className="p-5">
           <div className="mb-6">
             <div className="flex items-start gap-4">
-              <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16" />
+              {reply.author?.avatar ? (
+                <img
+                  src={reply.author?.avatar}
+                  alt={reply.author.name}
+                  className="w-16 h-16 rounded-xl object-cover border shadow-sm"
+                />
+              ) : (
+                <div
+                  className="w-12 h-12 rounded-xl flex items-center justify-center text-white text-lg font-semibold shadow-sm"
+                  style={{
+                    backgroundColor: generatePastelColor(reply.author._id),
+                  }}
+                >
+                  {generateInitials(reply.author.name)}
+                </div>
+              )}
+
               <div>
-                <h3 className="font-bold text-lg">{reply.authorName}</h3>
+                <h3 className="font-bold text-lg cursor-pointer hover:underline">
+                  <Link to={`/dashboard/users/${reply.author._id}`}>
+                    {reply.author.name}
+                  </Link>
+                </h3>
                 <p className="text-gray-500 text-sm">
                   {new Date(reply.createdAt).toLocaleString()}
                 </p>
@@ -103,7 +125,8 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
                 {reply.fragmentTitle}
               </p>
               <p>
-                <span className="font-medium">Category:</span> {reply.categoryName}
+                <span className="font-medium">Category:</span>{" "}
+                {reply.categoryName}
               </p>
             </div>
 

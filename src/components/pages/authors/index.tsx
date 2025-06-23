@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
@@ -7,6 +7,7 @@ import apiFetch from "../../../utils/axios";
 import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import useDotLoader from "../../../hooks/useDotLoader";
+import { Link } from "react-router-dom";
 
 const Authors = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -148,10 +149,10 @@ const Authors = () => {
               <TableRowSkeleton columns={8} rows={4} />
             ) : (
               authorsData.map((author) => (
-                <>
+                <React.Fragment key={author._id}>
                   {/* Main Row */}
-                  <tr key={author._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 relative p-3">
+                  <tr className="hover:bg-gray-50">
+                    <td className="border border-gray-300 relative p-3 cursor-pointer hover:underline">
                       <button
                         onClick={() => toggleExpand(author._id)}
                         className="flex items-center"
@@ -161,8 +162,9 @@ const Authors = () => {
                         ) : (
                           <FaChevronDown className="mr-2" />
                         )}
-
-                        {author.name}
+                        <Link to={`/dashboard/users/${author.userId._id}`}>
+                          {author.name}
+                        </Link>
                       </button>
                     </td>
                     <td className="border border-gray-300 p-2">
@@ -259,7 +261,7 @@ const Authors = () => {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))
             )}
             {!isLoading && !authorsData.length ? (

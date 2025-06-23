@@ -17,12 +17,16 @@ import SelectSkeleton from "../../skeletons/SelectSkeleton";
 import { useAuthContext } from "../../../context/authContext";
 import useDotLoader from "../../../hooks/useDotLoader";
 import useDebounce from "../../../hooks/useDebounce";
+import { Link } from "react-router-dom";
 
 export interface Reply {
   _id: string;
   content: string;
-  authorId: string;
-  authorName: string;
+  author: {
+    _id: string;
+    name: string;
+    avatar?: string;
+  };
   fragmentId: string;
   fragmentTitle: string;
   categoryName: string;
@@ -390,7 +394,11 @@ const Replies: React.FC = () => {
                       __html: DOMPurify.sanitize(item.content || ""),
                     }}
                   ></td>
-                  <td className="border p-2">{item.authorName}</td>
+                  <td className="border p-2 cursor-pointer hover:underline">
+                    <Link to={`/dashboard/users/${item.author._id}`}>
+                      {item.author.name}{" "}
+                    </Link>
+                  </td>
                   <td className="border p-2">{item.fragmentTitle}</td>
                   <td className="border p-2">{item.categoryName}</td>
                   <td className="border p-2">

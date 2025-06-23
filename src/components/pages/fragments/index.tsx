@@ -11,6 +11,7 @@ import ShowFragmentModal from "../ShowFragmentModal";
 import { useAuthContext } from "../../../context/authContext";
 import useDotLoader from "../../../hooks/useDotLoader";
 import useDebounce from "../../../hooks/useDebounce";
+import { Link } from "react-router-dom";
 
 export interface Fragment {
   _id: string;
@@ -19,6 +20,14 @@ export interface Fragment {
   category: { _id: string; name: string };
   status: string;
   createdAt: string;
+  updatedAt?: string;
+  description?: string;
+  content: string;
+  upvotes?: Array<any>;
+  downvotes?: Array<any>;
+  replies?: Array<any>;
+  viewCount?: number;
+  subscriptionCount?: number;
 }
 
 interface Option {
@@ -326,7 +335,12 @@ const Fragments: React.FC = () => {
               data.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   <td className="border p-2">{item.title}</td>
-                  <td className="border p-2">{item.author.name}</td>
+                  <td className="border p-2 cursor-pointer hover:underline">
+                    <Link to={`/dashboard/users/${item.author._id}`}>
+                      {" "}
+                      {item.author.name}{" "}
+                    </Link>
+                  </td>
                   <td className="border p-2">{item.category.name}</td>
                   <td
                     className={clsx("border p-2", {

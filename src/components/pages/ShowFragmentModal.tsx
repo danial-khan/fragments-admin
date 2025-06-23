@@ -13,6 +13,7 @@ import {
 import { Fragment } from "./fragments";
 import DOMPurify from "dompurify";
 import usersHomePageURL from "../../config/index"
+import { Link } from "react-router-dom";
 
 interface ShowFragmentModalProps {
   isOpen: boolean;
@@ -103,8 +104,10 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
             </div>
             <div className="flex-1 min-w-[150px]">
               <p className="text-md font-bold text-gray-700">Author</p>
-              <p className="text-sm text-secondary mt-1">
-                {fragment.author.name}
+              <p className="text-sm text-secondary mt-1 cursor-pointer hover:underline">
+                <Link to={`/dashboard/users/${fragment.author._id}`}>
+                  {fragment.author.name}
+                </Link>
               </p>
             </div>
             <div className="flex-1 min-w-[120px]">

@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
@@ -7,6 +7,7 @@ import { useAuthContext } from "../../../context/authContext";
 import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import useDotLoader from "../../../hooks/useDotLoader";
+import { Link } from "react-router-dom";
 
 const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -153,10 +154,10 @@ const Students = () => {
               <TableRowSkeleton columns={7} rows={5} />
             ) : (
               studentsData?.map((student) => (
-                <>
+                <React.Fragment key={student._id}>
                   {/* Main Row */}
-                  <tr key={student._id} className="hover:bg-gray-50">
-                    <td className="border border-gray-300 relative p-3">
+                  <tr className="hover:bg-gray-50">
+                    <td className="border border-gray-300 relative p-3 cursor-pointer hover:underline">
                       <button
                         onClick={() => toggleExpand(student.id)}
                         className="flex items-center"
@@ -166,8 +167,9 @@ const Students = () => {
                         ) : (
                           <FaChevronDown className="mr-2" />
                         )}
-
-                        {student.name}
+                        <Link to={`/dashboard/users/${student.userId._id}`}>
+                          {student.name}
+                        </Link>
                       </button>
                     </td>
                     <td className="border border-gray-300 p-2">
@@ -245,7 +247,7 @@ const Students = () => {
                       </td>
                     </tr>
                   )}
-                </>
+                </React.Fragment>
               ))
             )}
             {!isLoading && !studentsData.length ? (
