@@ -117,14 +117,14 @@ const Authors = () => {
   };
 
   return (
-    <div>
+    <div className="p-4" >
       <h1 className="text-2xl font-bold mb-6 text-secondary">
         Authors Credentials
       </h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white text-xs sm:text-sm ">
             <tr>
               <th className="border border-gray-300 p-2 text-left">Name</th>
               <th className="border border-gray-300 p-2 text-left">Email</th>
@@ -151,7 +151,7 @@ const Authors = () => {
               authorsData.map((author) => (
                 <React.Fragment key={author._id}>
                   {/* Main Row */}
-                  <tr className="hover:bg-gray-50">
+                  <tr className="hover:bg-gray-50 text-xs sm:text-sm">
                     <td className="border border-gray-300 relative p-3 cursor-pointer hover:underline">
                       <button
                         onClick={() => toggleExpand(author._id)}
@@ -240,7 +240,7 @@ const Authors = () => {
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            style={{ width: "100px" }}
+                            style={{ width: "80px" }}
                           >
                             {deletingAuthorId === author._id
                               ? `Deleting${dots}`

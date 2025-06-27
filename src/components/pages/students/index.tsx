@@ -125,14 +125,14 @@ const Students = () => {
   };
 
   return (
-    <div>
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-6 text-secondary">
         Students Credentials
       </h1>
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white text-xs sm:text-sm ">
             <tr>
               <th className="border border-gray-300 p-2 text-left">Name</th>
               <th className="border border-gray-300 p-2 text-left">Email</th>
@@ -156,7 +156,7 @@ const Students = () => {
               studentsData?.map((student) => (
                 <React.Fragment key={student._id}>
                   {/* Main Row */}
-                  <tr className="hover:bg-gray-50">
+                  <tr className="hover:bg-gray-50 text-xs sm:text-sm ">
                     <td className="border border-gray-300 relative p-3 cursor-pointer hover:underline">
                       <button
                         onClick={() => toggleExpand(student.id)}

@@ -80,7 +80,7 @@ const UserDetails: React.FC = () => {
           )}
 
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
+            <h1 className=" text-xl sm:text-3xl font-bold text-gray-900">{user.name}</h1>
             <p className="text-gray-500 text-sm">{user.email}</p>
             <span className="inline-block mt-2 text-xs font-medium px-2 py-1 rounded-full bg-blue-100 text-blue-700 capitalize">
               {user.type}

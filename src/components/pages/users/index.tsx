@@ -119,7 +119,7 @@ const Users = () => {
   }, [getUsers]);
 
   return (
-    <div>
+    <div className=" p-4 w-full ">
       <CreateUserModal
         isOpen={isCreateUserModalOpen}
         onClose={() => setIsCreateUserModalOpen(false)}
@@ -134,30 +134,40 @@ const Users = () => {
           <div className="flex items-end justify-end mb-4">
             <button
               onClick={() => setIsCreateUserModalOpen(true)}
-              className="px-4 py-2 bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
+              className="px-4 py-2 text-xs sm:text-sm bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
             >
-              <FontAwesomeIcon icon={faPlus} className="text-xs" /> Create New
+              <FontAwesomeIcon icon={faPlus} className="text-xs sm:text-sm" /> Create New
               Moderator
             </button>
           </div>
         )}
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto overflow-y-scroll   ">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white  ">
             <tr>
-              <th className="border border-gray-300 p-2 text-left">Name</th>
-              <th className="border border-gray-300 p-2 text-left">Email</th>
-              <th className="border border-gray-300 p-2 text-left">Type</th>
-              <th className="border border-gray-300 p-2 text-left">
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
+                Name
+              </th>
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
+                Email
+              </th>
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
+                Type
+              </th>
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
                 Created At
               </th>
-              <th className="border border-gray-300 p-2 text-left">
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
                 Updated At
               </th>
-              <th className="border border-gray-300 p-2 text-left">Status</th>
-              <th className="border border-gray-300 p-2 text-left">Actions</th>
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
+                Status
+              </th>
+              <th className="border border-gray-300 p-2 text-left text-xs sm:text-sm ">
+                Actions
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -166,24 +176,24 @@ const Users = () => {
             ) : (
               usersData?.map((userData) => {
                 return (
-                  <tr key={userData._id} className="hover:bg-gray-50">
+                  <tr key={userData._id} className="hover:bg-gray-50  text-xs sm:text-sm">
                     <td className="border border-gray-300 p-2 cursor-pointer hover:underline">
                       <Link to={`${userData._id}`}>{userData.name}</Link>
                     </td>
-                    <td className="border border-gray-300 p-2">
+                    <td className="border border-gray-300 p-2 text-xs sm:text-sm ">
                       {userData.email}
                     </td>
-                    <td className="border border-gray-300 p-2">
+                    <td className="border border-gray-300 p-2 text-xs sm:text-sm ">
                       {userData.type}
                     </td>
-                    <td className="border border-gray-300 p-2">
+                    <td className="border border-gray-300 p-2 text-xs sm:text-sm ">
                       {userData.createdAt}
                     </td>
-                    <td className="border border-gray-300 p-2">
+                    <td className="border border-gray-300 p-2 text-xs sm:text-sm ">
                       {userData.updatedAt}
                     </td>
                     <td
-                      className={clsx("px-2", {
+                      className={clsx("px-2  ", {
                         "bg-green-500 text-white": userData.active,
                         "bg-red-500 text-white": !userData.active,
                       })}
@@ -199,7 +209,7 @@ const Users = () => {
                               : activateUser(userData._id)
                           }
                           className={clsx(
-                            "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300 w-[110px]",
+                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300 sm:w-[110px] w-[80px] text-xs ",
                             userData.active
                               ? "bg-red-500 hover:bg-green-600"
                               : "bg-green-500 hover:bg-red-600"
@@ -213,12 +223,12 @@ const Users = () => {
                             onClick={() => deleteUser(userData._id)}
                             disabled={deletingUserId === userData._id}
                             className={clsx(
-                              "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                              "text-white py-2 rounded-lg px-4   font-medium transition-all duration-300",
                               deletingUserId === userData._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            style={{ width: "100px" }}
+                            style={{ width: "70px" }}
                           >
                             {deletingUserId === userData._id
                               ? `Deleting${dots}`
@@ -233,7 +243,7 @@ const Users = () => {
             )}
             {!isLoading && !usersData.length ? (
               <tr>
-                <td colSpan={7} className="p-4 text-center">
+                <td colSpan={7} className="p-4 text-center  ">
                   No Users data found
                 </td>
               </tr>

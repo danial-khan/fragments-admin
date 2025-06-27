@@ -10,12 +10,12 @@ const DashboardLayout = () => {
   if (!user) return <Navigate to="/" />;
 
   return (
-    <div className="flex h-screen">
+    <div className="  h-screen  ">
       <Sidebar />
       <div className="flex-1">
         <Navbar />
-        <main className="p-6 mt-20">
-          <div className="flex ml-66 flex-col">
+        <main className="sm:p-3 mt-20  ">
+          <div className="flex flex-col md:ml-60  ">
             <Outlet />
           </div>
         </main>

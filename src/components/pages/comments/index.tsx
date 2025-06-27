@@ -370,7 +370,7 @@ const Replies: React.FC = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white  text-xs sm:text-sm">
             <tr>
               <th className="border p-2 text-left">Content</th>
               <th className="border p-2 text-left">User</th>
@@ -387,9 +387,9 @@ const Replies: React.FC = () => {
               <TableRowSkeleton columns={8} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50">
+                <tr key={item._id} className="hover:bg-gray-50 text-xs sm:text-sm">
                   <td
-                    className="border p-2 max-w-xs truncate"
+                    className="border p-2  "
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(item.content || ""),
                     }}
@@ -420,15 +420,15 @@ const Replies: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border p-2 space-x-2">
+                  <td className="border flex flex-col p-2  space-x-2">
                     <button
-                      className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white ml-1 py-1 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       View
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white transition w-[80px] ${
+                      className={`py-1 px-3 rounded-lg mt-3 ml-1 text-white transition w-[80px] ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -442,7 +442,7 @@ const Replies: React.FC = () => {
                         onClick={() => deleteReply(item)}
                         disabled={deletingReplyId === item._id}
                         className={clsx(
-                          "text-white py-2 rounded-lg px-4 font-medium transition-all duration-300",
+                          "text-white py-2 mt-3 rounded-lg px-4 ml-1 font-medium transition-all duration-300",
                           deletingReplyId === item._id
                             ? "bg-gray-500 cursor-not-allowed"
                             : "bg-gray-700 hover:bg-gray-900"

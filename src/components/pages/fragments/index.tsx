@@ -221,8 +221,8 @@ const Fragments: React.FC = () => {
 
       <h1 className="text-2xl font-bold mb-4 text-secondary">Fragments</h1>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-4">
-        <div className="relative w-full md:w-1/2">
+      <div className="flex flex-col xl:flex-row gap-4 mb-4">
+        <div className="relative w-full xl:w-1/2">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-400 pointer-events-none"
@@ -235,7 +235,7 @@ const Fragments: React.FC = () => {
             className="w-full pl-12 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
-        <div className="relative w-full md:w-2/12">
+        <div className="relative w-full xl:w-2/12">
           <input
             type="text"
             placeholder="Fragment ID..."
@@ -318,7 +318,7 @@ const Fragments: React.FC = () => {
 
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white text-xs sm:text-sm ">
             <tr>
               <th className="border p-2 text-left">Title</th>
               <th className="border p-2 text-left">Author</th>
@@ -333,8 +333,8 @@ const Fragments: React.FC = () => {
               <TableRowSkeleton columns={6} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50">
-                  <td className="border p-2">{item.title}</td>
+                <tr key={item._id} className="hover:bg-gray-50  text-xs sm:text-sm">
+                  <td className="border  p-2">{item.title}</td>
                   <td className="border p-2 cursor-pointer hover:underline">
                     <Link to={`/dashboard/users/${item.author._id}`}>
                       {" "}
@@ -353,15 +353,15 @@ const Fragments: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border p-2 space-x-2">
+                  <td className="border flex flex-col sm:p-2 p-4 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white py-1 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white ml-2 mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       View
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white transition w-[80px] ${
+                      className={`py-1 px-3 rounded-lg text-white ml-2 mt-2 transition w-[80px] ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -377,7 +377,7 @@ const Fragments: React.FC = () => {
                         onClick={() => deleteFragment(item._id)}
                         disabled={deletingFragmentId === item._id}
                         className={clsx(
-                          "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-1 ml-2 mt-2 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingFragmentId === item._id
                             ? "bg-gray-500 cursor-not-allowed"
                             : "bg-gray-700 hover:bg-gray-900"
