@@ -87,7 +87,7 @@ const Categories = () => {
   }, [getCategories]);
 
   return (
-    <div>
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-6 text-secondary">Categories</h1>
 
       {/* Create Category Form */}
@@ -122,7 +122,7 @@ const Categories = () => {
       {/* Categories Table */}
       <div className="overflow-x-auto">
         <table className="w-full border-collapse border border-gray-300">
-          <thead className="bg-secondary text-white">
+          <thead className="bg-secondary text-white text-xs sm:text-sm">
             <tr>
               <th className="border border-gray-300 p-2 text-left">Name</th>
               <th className="border border-gray-300 p-2 text-left">Slug</th>
@@ -138,7 +138,7 @@ const Categories = () => {
               <TableRowSkeleton columns={5} rows={4} />
             ) : (
               categoriesData?.map((category) => (
-                <tr key={category._id} className="hover:bg-gray-50">
+                <tr key={category._id} className="hover:bg-gray-50  text-xs sm:text-sm">
                   <td className="border border-gray-300 p-2">
                     {category.name}
                   </td>

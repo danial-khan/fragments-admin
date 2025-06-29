@@ -29,7 +29,6 @@ const App = () => {
             <Route path="categories" Component={Categories} />
             <Route path="fragments" Component={Fragments} />
             <Route path="comments" Component={Comments} />
-            <Route path="comments" Component={Comments} />
           </Route>
         </Routes>
       </BrowserRouter>
