@@ -172,7 +172,7 @@ const Replies: React.FC = () => {
         sortOrder,
       };
       if (category) params.category = category;
-      if (userList) params.userList = userList;
+      if (userList) params.author = userList;
       if (debouncedFragmentId) params.fragmentId = debouncedFragmentId;
       if (depth) params.depth = depth;
       if (status) params.status = status;
@@ -394,7 +394,10 @@ const Replies: React.FC = () => {
               <TableRowSkeleton columns={8} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                <tr
+                  key={item._id}
+                  className="hover:bg-gray-50 text-xs sm:text-sm"
+                >
                   <td
                     className="border p-2  "
                     dangerouslySetInnerHTML={{
@@ -427,7 +430,7 @@ const Replies: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className=" border-b border-r flex flex-row  sm:p-2 p-3  space-x-2">
+                  <td className="border p-2 space-x-2">
                     <button
                       className="bg-yellow-500 text-white  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
@@ -442,26 +445,29 @@ const Replies: React.FC = () => {
                       }`}
                       onClick={() => toggleReplyStatus(item)}
                     >
-                      {item.status === "blocked" ? <FontAwesomeIcon icon={faCheckCircle} /> : <FontAwesomeIcon icon={faBan} />}
+                      {item.status === "blocked" ? (
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                      ) : (
+                        <FontAwesomeIcon icon={faBan} />
+                      )}
                     </button>
                     {user.type === "admin" && (
-                        <button
+                      <button
                         onClick={() => deleteReply(item)}
                         disabled={deletingReplyId === item._id}
                         className={clsx(
                           "text-white py-1 mt-3 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingReplyId === item._id
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-gray-700 hover:bg-gray-900"
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
                         )}
-                      
-                        >
+                      >
                         {deletingReplyId === item._id ? (
                           `Deleting${dots}`
                         ) : (
                           <FontAwesomeIcon icon={faTrash} />
                         )}
-                        </button>
+                      </button>
                     )}
                   </td>
                 </tr>

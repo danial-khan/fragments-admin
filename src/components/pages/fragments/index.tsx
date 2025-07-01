@@ -337,7 +337,7 @@ const Fragments: React.FC = () => {
                   key={item._id}
                   className="hover:bg-gray-50  text-xs sm:text-sm"
                 >
-                  <td className="border  p-2">{item.title}</td>
+                  <td className="border p-2">{item.title}</td>
                   <td className="border p-2 cursor-pointer hover:underline">
                     <Link to={`/dashboard/users/${item.author._id}`}>
                       {" "}
@@ -356,7 +356,7 @@ const Fragments: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border  sm:p-2 p-3 space-x-2">
+                  <td className="border p-2 space-x-2">
                     <button
                       className="bg-yellow-500 text-white  xl:ml-5  mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
