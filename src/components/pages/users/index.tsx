@@ -209,7 +209,7 @@ const Users = () => {
                               : activateUser(userData._id)
                           }
                           className={clsx(
-                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300 sm:w-[110px] w-[80px] text-xs ",
+                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300  w-[80px] text-xs ",
                             userData.active
                               ? "bg-red-500 hover:bg-green-600"
                               : "bg-green-500 hover:bg-red-600"
