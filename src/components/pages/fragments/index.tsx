@@ -1,5 +1,5 @@
 "use client";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faBan, faCheckCircle, faEye, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useState, useTransition } from "react";
@@ -333,7 +333,10 @@ const Fragments: React.FC = () => {
               <TableRowSkeleton columns={6} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50  text-xs sm:text-sm">
+                <tr
+                  key={item._id}
+                  className="hover:bg-gray-50  text-xs sm:text-sm"
+                >
                   <td className="border  p-2">{item.title}</td>
                   <td className="border p-2 cursor-pointer hover:underline">
                     <Link to={`/dashboard/users/${item.author._id}`}>
@@ -353,15 +356,15 @@ const Fragments: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border flex flex-col sm:p-2 p-4 space-x-2">
+                  <td className="border  sm:p-2 p-3 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white ml-2 mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white  xl:ml-5  mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
-                      View
+                      <FontAwesomeIcon icon={faEye} />
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white ml-2 mt-2 transition w-[80px] ${
+                      className={`py-1 px-3 rounded-lg text-white  mt-2 transition  ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -370,24 +373,27 @@ const Fragments: React.FC = () => {
                         toggleFragmentStatus(item._id, item.status)
                       }
                     >
-                      {item.status === "blocked" ? "Publish" : "Block"}
+                      {item.status === "blocked" ? (
+                        <FontAwesomeIcon icon={faCheckCircle} />
+                      ) : (
+                        <FontAwesomeIcon icon={faBan} />
+                      )}
                     </button>
                     {user.type === "admin" && (
-                      <button
+                        <button
                         onClick={() => deleteFragment(item._id)}
                         disabled={deletingFragmentId === item._id}
                         className={clsx(
-                          "text-white py-1 ml-2 mt-2 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-1  mt-2 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingFragmentId === item._id
-                            ? "bg-gray-500 cursor-not-allowed"
-                            : "bg-gray-700 hover:bg-gray-900"
+                          ? "bg-gray-500 cursor-not-allowed"
+                          : "bg-gray-700 hover:bg-gray-900"
                         )}
-                        style={{ width: "100px" }}
-                      >
+                        >
                         {deletingFragmentId === item._id
                           ? `Deleting${dots}`
-                          : "Delete"}
-                      </button>
+                          : <FontAwesomeIcon icon={faTrash} />}
+                        </button>
                     )}
                   </td>
                 </tr>
