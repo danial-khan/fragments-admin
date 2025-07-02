@@ -1,30 +1,27 @@
 "use client";
-import React, { useEffect, useState, useCallback, useTransition } from "react";
-import apiFetch from "../../../utils/axios";
-import clsx from "clsx";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSearch,
+  faBan,
+  faCheckCircle,
   faComment,
   faCommentDots,
   faComments,
-  faUsersViewfinder,
-  faDeleteLeft,
-  faBridgeLock,
-  faCheckCircle,
-  faBan,
-  faTrash,
   faEye,
+  faSearch,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
 import DOMPurify from "dompurify";
-import ShowCommentModal from "../ShowCommentModal";
-import { toast } from "react-toastify";
-import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
-import SelectSkeleton from "../../skeletons/SelectSkeleton";
-import { useAuthContext } from "../../../context/authContext";
-import useDotLoader from "../../../hooks/useDotLoader";
-import useDebounce from "../../../hooks/useDebounce";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/authContext";
+import useDebounce from "../../../hooks/useDebounce";
+import useDotLoader from "../../../hooks/useDotLoader";
+import apiFetch from "../../../utils/axios";
+import SelectSkeleton from "../../skeletons/SelectSkeleton";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import ShowCommentModal from "../ShowCommentModal";
 
 export interface Reply {
   _id: string;
@@ -41,6 +38,8 @@ export interface Reply {
   status: string;
   createdAt: string;
   parentReplyId?: string;
+  upvotes?: Array<any>;
+  downvotes?: Array<any>;
 }
 
 interface Option {
