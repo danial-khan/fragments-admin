@@ -162,7 +162,7 @@ const Categories = () => {
                     <div className="flex justify-center gap-2">
                       <button
                         onClick={() => deleteCategory(category._id)}
-                        className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
+                        className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 px-3"
                       >
                         <FontAwesomeIcon icon={faTrash} />
                       </button>

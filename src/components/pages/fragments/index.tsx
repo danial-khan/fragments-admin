@@ -1,5 +1,11 @@
 "use client";
-import { faBan, faCheckCircle, faEye, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCheckCircle,
+  faEye,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useState, useTransition } from "react";
@@ -358,13 +364,13 @@ const Fragments: React.FC = () => {
                   </td>
                   <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white  xl:ml-5  mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white  mt-2 py-2 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white  mt-2 transition  ${
+                      className={`py-2 px-3 rounded-lg text-white  mt-2 transition  ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -380,20 +386,22 @@ const Fragments: React.FC = () => {
                       )}
                     </button>
                     {user.type === "admin" && (
-                        <button
+                      <button
                         onClick={() => deleteFragment(item._id)}
                         disabled={deletingFragmentId === item._id}
                         className={clsx(
-                          "text-white py-1  mt-2 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-2 mt-2 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingFragmentId === item._id
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-gray-700 hover:bg-gray-900"
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
                         )}
-                        >
-                        {deletingFragmentId === item._id
-                          ? `Deleting${dots}`
-                          : <FontAwesomeIcon icon={faTrash} />}
-                        </button>
+                      >
+                        {deletingFragmentId === item._id ? (
+                          `${dots}`
+                        ) : (
+                          <FontAwesomeIcon icon={faTrash} />
+                        )}
+                      </button>
                     )}
                   </td>
                 </tr>

@@ -1,13 +1,14 @@
 "use client";
 import {
   faBan,
+  faCheck,
   faCheckCircle,
   faComment,
   faCommentDots,
   faComments,
   faEye,
   faSearch,
-  faTrash
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
@@ -227,23 +228,23 @@ const Replies: React.FC = () => {
     setDeletingReplyId(reply._id);
 
     startTransition(() => {
-        apiFetch
-          .delete(`/admin/replies/${reply._id}`, {
-            data: { fragmentId: reply.fragmentId }
-          })
-          .then(() => {
-            toast.success("Fragment deleted successfully");
-            setData((prev) => prev.filter((r) => r._id !== reply._id));
-          })
-          .catch(() => {
-            toast("Error deleting user. Please try again later.", {
-              type: "error",
-            });
-            fetchData();
-          })
-          .finally(() => {
-            setDeletingReplyId(null);
+      apiFetch
+        .delete(`/admin/replies/${reply._id}`, {
+          data: { fragmentId: reply.fragmentId },
+        })
+        .then(() => {
+          toast.success("Fragment deleted successfully");
+          setData((prev) => prev.filter((r) => r._id !== reply._id));
+        })
+        .catch(() => {
+          toast("Error deleting user. Please try again later.", {
+            type: "error",
           });
+          fetchData();
+        })
+        .finally(() => {
+          setDeletingReplyId(null);
+        });
     });
   };
 
@@ -431,13 +432,13 @@ const Replies: React.FC = () => {
                   </td>
                   <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg mt-3  text-white transition  ${
+                      className={`py-2 px-3 rounded-lg mt-3  text-white transition  ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -445,7 +446,7 @@ const Replies: React.FC = () => {
                       onClick={() => toggleReplyStatus(item)}
                     >
                       {item.status === "blocked" ? (
-                        <FontAwesomeIcon icon={faCheckCircle} />
+                        <FontAwesomeIcon icon={faCheck} />
                       ) : (
                         <FontAwesomeIcon icon={faBan} />
                       )}
@@ -455,14 +456,14 @@ const Replies: React.FC = () => {
                         onClick={() => deleteReply(item)}
                         disabled={deletingReplyId === item._id}
                         className={clsx(
-                          "text-white py-1 mt-3 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-2 mt-3 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingReplyId === item._id
                             ? "bg-gray-500 cursor-not-allowed"
                             : "bg-gray-700 hover:bg-gray-900"
                         )}
                       >
                         {deletingReplyId === item._id ? (
-                          `Deleting${dots}`
+                          `${dots}`
                         ) : (
                           <FontAwesomeIcon icon={faTrash} />
                         )}

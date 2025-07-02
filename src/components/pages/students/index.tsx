@@ -223,15 +223,14 @@ const Students = () => {
                             onClick={() => deleteStudent(student._id)}
                             disabled={deletingStudentId === student._id}
                             className={clsx(
-                              "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300",
+                              "text-white py-2 rounded-lg px-3 font-medium transition-all duration-300",
                               deletingStudentId === student._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            
                           >
                             {deletingStudentId === student._id ? (
-                              `Deleting${dots}`
+                              `${dots}`
                             ) : (
                               <FontAwesomeIcon icon={faTrash} />
                             )}

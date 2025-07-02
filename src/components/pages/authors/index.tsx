@@ -226,7 +226,7 @@ const Authors = () => {
                           author.status === "approved") && (
                           <button
                             onClick={() => rejectCredentials(author._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition px-3"
+                            className="bg-red-500 text-white py-2 rounded-lg c transition px-3"
                           >
                             <FontAwesomeIcon icon={faBan} />
                           </button>
@@ -244,7 +244,7 @@ const Authors = () => {
                             )}
                           >
                             {deletingAuthorId === author._id ? (
-                              `Deleting${dots}`
+                              `${dots}`
                             ) : (
                               <FontAwesomeIcon icon={faTrash} />
                             )}
