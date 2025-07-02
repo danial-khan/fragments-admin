@@ -1,6 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { faTrash, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
 import apiFetch from "../../../utils/axios";
@@ -8,6 +9,7 @@ import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import useDotLoader from "../../../hooks/useDotLoader";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Authors = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -117,7 +119,7 @@ const Authors = () => {
   };
 
   return (
-    <div className="p-4" >
+    <div className="p-4">
       <h1 className="text-2xl font-bold mb-6 text-secondary">
         Authors Credentials
       </h1>
@@ -215,18 +217,18 @@ const Authors = () => {
                           author.status === "rejected") && (
                           <button
                             onClick={() => approveCredentials(author._id)}
-                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                            className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 transition "
                           >
-                            Approve
+                            <FontAwesomeIcon icon={faCheck} />
                           </button>
                         )}
                         {(author.status === "pending" ||
                           author.status === "approved") && (
                           <button
                             onClick={() => rejectCredentials(author._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition px-3"
                           >
-                            Reject
+                            <FontAwesomeIcon icon={faBan} />
                           </button>
                         )}
 
@@ -235,16 +237,17 @@ const Authors = () => {
                             onClick={() => deleteAuthor(author._id)}
                             disabled={deletingAuthorId === author._id}
                             className={clsx(
-                              "text-white py-1 rounded-lg px-3 font-medium transition-all duration-300",
+                              "text-white  rounded-lg px-3 font-medium transition-all duration-300",
                               deletingAuthorId === author._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            style={{ width: "80px" }}
                           >
-                            {deletingAuthorId === author._id
-                              ? `Deleting${dots}`
-                              : "Delete"}
+                            {deletingAuthorId === author._id ? (
+                              `Deleting${dots}`
+                            ) : (
+                              <FontAwesomeIcon icon={faTrash} />
+                            )}
                           </button>
                         )}
                       </div>

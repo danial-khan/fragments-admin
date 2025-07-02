@@ -1,8 +1,13 @@
 "use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCheckCircle,
+  faPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { Link } from "react-router-dom";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
@@ -136,8 +141,8 @@ const Users = () => {
               onClick={() => setIsCreateUserModalOpen(true)}
               className="px-4 py-2 text-xs sm:text-sm bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
             >
-              <FontAwesomeIcon icon={faPlus} className="text-xs sm:text-sm" /> Create New
-              Moderator
+              <FontAwesomeIcon icon={faPlus} className="text-xs sm:text-sm" />{" "}
+              Create New Moderator
             </button>
           </div>
         )}
@@ -176,7 +181,10 @@ const Users = () => {
             ) : (
               usersData?.map((userData) => {
                 return (
-                  <tr key={userData._id} className="hover:bg-gray-50  text-xs sm:text-sm">
+                  <tr
+                    key={userData._id}
+                    className="hover:bg-gray-50  text-xs sm:text-sm"
+                  >
                     <td className="border border-gray-300 p-2 cursor-pointer hover:underline">
                       <Link to={`${userData._id}`}>{userData.name}</Link>
                     </td>
@@ -200,7 +208,7 @@ const Users = () => {
                     >
                       {userData.active ? "Active" : "Inactive"}
                     </td>
-                    <td className="border border-gray-300 py-2">
+                    <td className="border border-gray-300 py-2 px-2">
                       <div className="flex justify-center gap-2">
                         <button
                           onClick={() =>
@@ -209,13 +217,17 @@ const Users = () => {
                               : activateUser(userData._id)
                           }
                           className={clsx(
-                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300  w-[80px] text-xs ",
+                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300   text-xs ",
                             userData.active
                               ? "bg-red-500 hover:bg-green-600"
                               : "bg-green-500 hover:bg-red-600"
                           )}
                         >
-                          {userData.active ? "Deactivate" : "Activate"}
+                          {userData.active ? (
+                            <FontAwesomeIcon icon={faBan} />
+                          ) : (
+                            <FontAwesomeIcon icon={faCheckCircle} />
+                          )}
                         </button>
 
                         {user.type === "admin" && (
@@ -223,16 +235,17 @@ const Users = () => {
                             onClick={() => deleteUser(userData._id)}
                             disabled={deletingUserId === userData._id}
                             className={clsx(
-                              "text-white py-2 rounded-lg px-4   font-medium transition-all duration-300",
+                              "text-white py-2 rounded-lg px-3   font-medium transition-all duration-300",
                               deletingUserId === userData._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            style={{ width: "70px" }}
                           >
-                            {deletingUserId === userData._id
-                              ? `Deleting${dots}`
-                              : "Delete"}
+                            {deletingUserId === userData._id ? (
+                              `Deleting${dots}`
+                            ) : (
+                              <FontAwesomeIcon icon={faTrash} />
+                            )}
                           </button>
                         )}
                       </div>
