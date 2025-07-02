@@ -7,6 +7,8 @@ import clsx from "clsx";
 import { cateogryColors } from "../../../utils/categories";
 import { useAuthContext } from "../../../context/authContext";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 const Categories = () => {
   const [isCreateLoading, setIsCreateLoading] = useState(false);
@@ -162,7 +164,7 @@ const Categories = () => {
                         onClick={() => deleteCategory(category._id)}
                         className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 px-2"
                       >
-                        Delete
+                        <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </div>
                   </td>

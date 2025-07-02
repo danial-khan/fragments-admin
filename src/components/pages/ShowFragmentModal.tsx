@@ -30,15 +30,15 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 h-[100%] pt-[570px] md:pt-0 flex items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 my-8">
         {/* Header */}
-        <div className="flex justify-between items-center p-5 border-b">
+        <div className="flex justify-between items-center p-5 border-b   ">
           <a
             href={`${usersHomePageURL}/dashboard/fragment/${fragment._id}`}
-            className="text-2xl font-bold text-secondary hover:underline hover:cursor-pointer"
+            className=" text-lg  md:text-2xl font-bold text-secondary hover:underline hover:cursor-pointer"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -53,7 +53,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
         </div>
 
         {/* Stats Bar */}
-        <div className="flex flex-wrap gap-4 px-5 pt-4">
+        <div className="flex flex-wrap gap-4 md:px-4 px-1  pt-4">
           {[
             {
               icon: faThumbsUp,
@@ -146,7 +146,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center p-5 border-t">
+        <div className="flex justify-between text-sm md:text-xl items-center p-5 border-t">
           <a
             href={`${usersHomePageURL}/dashboard/fragment/${fragment._id}`}
             target="_blank"
@@ -158,7 +158,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
           </a>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-secondary transition"
+            className="md:px-6 md:py-2 px-3 py-1 bg-accent text-white font-medium rounded-lg hover:bg-secondary transition"
           >
             Close
           </button>

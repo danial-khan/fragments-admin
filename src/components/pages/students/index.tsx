@@ -4,10 +4,12 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
+import { faTrash, faBan, faCheck } from "@fortawesome/free-solid-svg-icons";
 import clsx from "clsx";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import useDotLoader from "../../../hooks/useDotLoader";
 import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Students = () => {
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
@@ -201,18 +203,18 @@ const Students = () => {
                           student.status === "rejected") && (
                           <button
                             onClick={() => approveCredentials(student._id)}
-                            className="bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition w-[80px]"
+                            className="bg-green-500 text-white py-2 px-3 rounded-lg hover:bg-green-600 transition "
                           >
-                            Approve
+                            <FontAwesomeIcon icon={faCheck} />
                           </button>
                         )}
                         {(student.status === "pending" ||
                           student.status === "approved") && (
                           <button
                             onClick={() => rejectCredentials(student._id)}
-                            className="bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition w-[80px]"
+                            className="bg-red-500 text-white py-2 px-3 rounded-lg hover:bg-red-600 transition "
                           >
-                            Reject
+                            <FontAwesomeIcon icon={faBan} />
                           </button>
                         )}
 
@@ -226,11 +228,13 @@ const Students = () => {
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
-                            style={{ width: "100px" }}
+                            
                           >
-                            {deletingStudentId === student._id
-                              ? `Deleting${dots}`
-                              : "Delete"}
+                            {deletingStudentId === student._id ? (
+                              `Deleting${dots}`
+                            ) : (
+                              <FontAwesomeIcon icon={faTrash} />
+                            )}
                           </button>
                         )}
                       </div>

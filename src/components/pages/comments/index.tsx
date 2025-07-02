@@ -427,7 +427,7 @@ const Replies: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className=" border-b border-r flex flex-row  sm:p-2 p-3  space-x-2">
+                  <td className=" border-b border-r xl:flex flex-row  sm:p-2 p-3  space-x-2">
                     <button
                       className="bg-yellow-500 text-white  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}

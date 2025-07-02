@@ -56,7 +56,7 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 flex pt-36 md:pt-0 items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
       <div className="bg-white  rounded-2xl shadow-2xl w-full max-w-3xl mx-4 my-8">
@@ -138,8 +138,8 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
               <p className="mb-1">
                 <span className="font-medium">Status:</span>
                 <span
-                  className={clsx("ml-2 px-2 py-1 rounded", {
-                    "bg-green-500 text-white": reply.status === "published",
+                  className={clsx("ml-2 px-2 py-1 rounded-xl", {
+                    "bg-green-300 text-white": reply.status === "published",
                     "bg-red-500 text-white": reply.status === "blocked",
                   })}
                 >
@@ -154,7 +154,7 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-between items-center p-5 border-t">
+        <div className="flex justify-between text-sm md:text-xl items-center p-5 border-t">
           <a
             href={`${usersHomePageURL}/dashboard/fragment/${reply.fragmentId}`}
             target="_blank"
@@ -166,7 +166,7 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
           </a>
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-accent text-white font-medium rounded-lg hover:bg-secondary transition"
+            className=" md:px-6  md:py-2 px-3 py-1 bg-accent text-white font-medium rounded-lg hover:bg-secondary transition"
           >
             Close
           </button>
