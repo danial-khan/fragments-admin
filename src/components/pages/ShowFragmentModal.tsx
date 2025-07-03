@@ -30,10 +30,10 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 h-[100%] pt-[570px] md:pt-0 flex items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 h-[100%] pt-[350px] sm:pt-10 md:pt-20 xl:pt-48 flex items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl mx-4 my-8">
+      <div className="bg-white rounded-2xl shadow-2xl w-full md:w-[90%]  max-w-4xl mx-4 my-8">
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b   ">
           <a
@@ -83,7 +83,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
           ].map(({ icon, label, value }) => (
             <div
               key={label}
-              className="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg shadow-sm"
+              className="flex  items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg shadow-sm"
             >
               <FontAwesomeIcon icon={icon} className="text-secondary" />
               <span className="text-sm font-medium text-gray-700">
@@ -102,7 +102,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
                 {fragment.category.name}
               </p>
             </div>
-            <div className="flex-1 min-w-[150px]">
+            <div className="flex-1  md:min-w-[110px] lg:min-w-[150px]">
               <p className="text-md font-bold text-gray-700">Author</p>
               <p className="text-sm text-secondary mt-1 cursor-pointer hover:underline">
                 <Link to={`/dashboard/users/${fragment.author._id}`}>
@@ -110,17 +110,17 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
                 </Link>
               </p>
             </div>
-            <div className="flex-1 min-w-[120px]">
+            <div className="flex-1 md:min-w-[110px] lg:min-w-[120px]">
               <p className="text-md font-bold text-gray-700">Status</p>
               <p className="text-sm text-secondary mt-1">{fragment.status}</p>
             </div>
-            <div className="flex-1 min-w-[180px]">
+            <div className="flex-1 ml-12 sm:ml-0 md:min-w-[110px] lg:min-w-[180px]">
               <p className="text-md font-bold text-gray-700">Created At</p>
               <p className="text-sm text-secondary mt-1">
                 {new Date(fragment.createdAt).toLocaleString()}
               </p>
             </div>
-            <div className="flex-1 min-w-[150px]">
+            <div className="flex-1 md:min-w-[110px] lg:min-w-[150px]">
               <p className="text-md font-bold text-gray-700">Updated At</p>
               <p className="text-sm text-secondary mt-1">
                 {fragment.updatedAt

@@ -235,7 +235,7 @@ const Users = () => {
                             onClick={() => deleteUser(userData._id)}
                             disabled={deletingUserId === userData._id}
                             className={clsx(
-                              "text-white py-2 rounded-lg px-3   font-medium transition-all duration-300",
+                              "text-white py-1 rounded-lg px-3   font-medium transition-all duration-300",
                               deletingUserId === userData._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"

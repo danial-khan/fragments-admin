@@ -263,8 +263,8 @@ const Replies: React.FC = () => {
         Comments
       </h1>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-2 mb-4 md:items-center">
-        <div className="relative w-full md:w-1/4">
+      <div className="flex flex-wrap xl:flex-nowrap gap-x-2 gap-y-2 mb-4 md:items-center">
+        <div className="relative w-full md:w-[45%] lg:w-1/4">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-400 pointer-events-none"
@@ -278,7 +278,7 @@ const Replies: React.FC = () => {
           />
         </div>
 
-        <div className="relative w-full md:w-2/12">
+        <div className="relative w-full md:w-[50%] lg:w-2/12">
           <input
             type="text"
             placeholder="Fragment ID..."
@@ -300,7 +300,7 @@ const Replies: React.FC = () => {
               setCategory(e.target.value);
               setPage(1);
             }}
-            className={`${selectClasses} w-full md:w-auto`}
+            className={`${selectClasses} w-full md:w-[45%] lg:w-auto`}
           >
             <option value="">All Categories</option>
             {categoriesData.map((cat) => (
@@ -320,7 +320,7 @@ const Replies: React.FC = () => {
               setUserList(e.target.value);
               setPage(1);
             }}
-            className={`${selectClasses} w-full md:w-auto`}
+            className={`${selectClasses} w-full md:w-[50%] lg:w-[15%] xl:w-[15%] `}
           >
             <option value="">All Users</option>
             {usersData.map((userData) => (
@@ -337,7 +337,7 @@ const Replies: React.FC = () => {
             setDepth(e.target.value ? parseInt(e.target.value) : "");
             setPage(1);
           }}
-          className={`${selectClasses} w-full md:w-auto`}
+          className={`${selectClasses} w-full md:w-[29%] lg:w-auto`}
         >
           <option value="">All Depths</option>
           <option value="1">Depth 1</option>
@@ -366,7 +366,7 @@ const Replies: React.FC = () => {
             setSortOrder(newOrder as "asc" | "desc");
             setPage(1);
           }}
-          className={`${selectClasses} w-full md:w-auto`}
+          className={`${selectClasses} w-full md:w-[35%] lg:w-auto`}
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>
@@ -429,7 +429,7 @@ const Replies: React.FC = () => {
                   </td>
                   <td className=" border-b border-r xl:flex flex-row  sm:p-2 p-3  space-x-2">
                     <button
-                      className="bg-yellow-500 text-white  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white py-1  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />

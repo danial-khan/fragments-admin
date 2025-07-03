@@ -221,8 +221,8 @@ const Fragments: React.FC = () => {
 
       <h1 className="text-2xl font-bold mb-4 text-secondary">Fragments</h1>
 
-      <div className="flex flex-col xl:flex-row gap-4 mb-4">
-        <div className="relative w-full xl:w-1/2">
+      <div className="flex flex-wrap xl:flex-nowrap gap-x-2   gap-y-2 mb-4 md:items-center">
+        <div className="relative w-full md:w-[45%] lg:w-1/4">
           <FontAwesomeIcon
             icon={faSearch}
             className="absolute left-4 top-1/2 transform -translate-y-1/2 text-yellow-400 pointer-events-none"
@@ -235,7 +235,7 @@ const Fragments: React.FC = () => {
             className="w-full pl-12 pr-4 py-3 rounded-lg bg-white text-secondary border border-gray-300 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           />
         </div>
-        <div className="relative w-full xl:w-2/12">
+        <div className="relative w-full md:w-[50%] lg:w-2/12">
           <input
             type="text"
             placeholder="Fragment ID..."
@@ -256,7 +256,7 @@ const Fragments: React.FC = () => {
               setCategory(e.target.value);
               setPage(1);
             }}
-            className={selectClasses}
+            className={`${selectClasses} w-full md:w-[45%] lg:w-auto`}
           >
             <option value="">Select a category</option>
             {categoriesData.map((cat) => (
@@ -276,7 +276,7 @@ const Fragments: React.FC = () => {
               setAuthor(e.target.value);
               setPage(1);
             }}
-            className={selectClasses}
+            className={`${selectClasses} w-full md:w-[50%] lg:w-auto`}
           >
             <option value="">Select an author</option>
             {authorsData.map((auth) => (
@@ -293,7 +293,7 @@ const Fragments: React.FC = () => {
             setStatus(e.target.value);
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-[45%] lg:w-auto`}
         >
           <option value="">All</option>
           <option value="published">Published</option>
@@ -307,7 +307,7 @@ const Fragments: React.FC = () => {
             setSortOrder(newOrder as "asc" | "desc");
             setPage(1);
           }}
-          className={selectClasses}
+          className={`${selectClasses} w-full md:w-[50%] lg:w-auto`}
         >
           <option value="createdAt_desc">Newest First</option>
           <option value="createdAt_asc">Oldest First</option>

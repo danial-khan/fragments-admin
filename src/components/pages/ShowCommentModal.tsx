@@ -56,10 +56,10 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex pt-36 md:pt-0 items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 flex pt-52 md:pt-28 items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
-      <div className="bg-white  rounded-2xl shadow-2xl w-full max-w-3xl mx-4 my-8">
+      <div className="bg-white  rounded-2xl shadow-2xl w-full md:w-[90%] lg:w-full max-w-3xl mx-4 my-8">
         <div className="flex justify-between items-center p-5 border-b">
           <div>
             <h2 className="text-xl font-bold text-secondary flex items-center gap-2">
