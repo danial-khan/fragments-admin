@@ -20,10 +20,12 @@ export interface FragmentAIReviewFeedback {
 
 interface FragmentFeedbackReviewProps {
   feedback?: FragmentAIReviewFeedback;
+  aiStatus?: string;
 }
 
 export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
   feedback,
+  aiStatus,
 }) => {
   if (!feedback) return null;
 
@@ -74,33 +76,27 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
       </div>
     );
   };
-  
 
   return (
     <div className="text-sm text-gray-800 space-y-4">
-      <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200">
-        <p className="font-semibold">
-          This fragment was blocked due to content violations:
-        </p>
-      </div>
+      {aiStatus === "rejected" ? (
+        <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200">
+          <p className="font-semibold">
+            This fragment was blocked due to content violations:
+          </p>
+        </div>
+      ) : (
+        <div className="bg-red-100 text-green-800 p-3 rounded-md border border-red-200">
+          <p className="font-semibold">
+            This fragment passed moderation but includes areas for improvement:
+          </p>
+        </div>
+      )}
 
       {renderIssue("Misinformation", feedback.misinformation)}
       {renderIssue("Unethical Advice", feedback.unethical)}
       {renderIssue("Plagiarism", feedback.plagiarism)}
       {renderIssue("Abusive Language", feedback.abusive)}
-
-      <p className="text-gray-600 text-sm">
-        After making the suggested changes, you can re-submit the fragment.
-        <br />
-        If you believe this decision was incorrect, please{" "}
-        <a
-          href="/contact-support"
-          className="text-accent font-medium underline"
-        >
-          contact support
-        </a>
-        .
-      </p>
     </div>
   );
 };

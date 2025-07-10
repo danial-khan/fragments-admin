@@ -11,13 +11,14 @@ import { FragmentFeedbackReview } from "./FragmentFeedbackReview";
 interface FragmentFeedbackReviewModalProps {
   isOpen: boolean;
   onClose: () => void;
+  aiStatus?: string;
   feedback: any;
   summary?: string;
 }
 
 export const FragmentFeedbackReviewModal: React.FC<
   FragmentFeedbackReviewModalProps
-> = ({ isOpen, onClose, feedback, summary }) => {
+> = ({ isOpen, onClose, aiStatus, feedback, summary }) => {
   if (!isOpen) return null;
 
   const hasFeedback = feedback && Object.keys(feedback).length > 0;
@@ -55,7 +56,7 @@ export const FragmentFeedbackReviewModal: React.FC<
           )}
 
           {hasFeedback ? (
-            <FragmentFeedbackReview feedback={feedback} />
+            <FragmentFeedbackReview feedback={feedback} aiStatus={aiStatus} />
           ) : !hasSummary ? (
             <div className="text-center border border-gray-200 bg-gray-50 p-6 rounded-md">
               <FontAwesomeIcon

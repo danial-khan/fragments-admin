@@ -7,6 +7,7 @@ import {
   faCommentDots,
   faComments,
   faEye,
+  faInfoCircle,
   faSearch,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -23,6 +24,7 @@ import apiFetch from "../../../utils/axios";
 import SelectSkeleton from "../../skeletons/SelectSkeleton";
 import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import ShowCommentModal from "../ShowCommentModal";
+import CommentFeedbackReviewModal from "../CommentFeedbackReviewModal";
 
 export interface Reply {
   _id: string;
@@ -37,6 +39,9 @@ export interface Reply {
   categoryName: string;
   depth: number;
   status: string;
+  aiReviewStatus: string;
+  aiReviewFeedback: any;
+  aiReviewSummary: string;
   createdAt: string;
   parentReplyId?: string;
   upvotes?: Array<any>;
@@ -75,6 +80,7 @@ const Replies: React.FC = () => {
   const [usersData, setUsersData] = useState<Option[]>([]);
   const [selectedReply, setSelectedReply] = useState<Reply | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [usersLoading, setUsersLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
 
@@ -259,6 +265,14 @@ const Replies: React.FC = () => {
         reply={selectedReply}
       />
 
+      <CommentFeedbackReviewModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        aiStatus={selectedReply?.aiReviewStatus}
+        feedback={selectedReply?.aiReviewFeedback}
+        summary={selectedReply?.aiReviewSummary}
+      />
+
       <h1 className="text-2xl font-bold mb-4 text-secondary flex items-center gap-2">
         Comments
       </h1>
@@ -384,6 +398,7 @@ const Replies: React.FC = () => {
               <th className="border p-2 text-left">Fragment</th>
               <th className="border p-2 text-left">Category</th>
               <th className="border p-2 text-left">Depth</th>
+              <th className="border p-2 text-left">AI Status</th>
               <th className="border p-2 text-left">Status</th>
               <th className="border p-2 text-left">Created</th>
               <th className="border p-2 text-left">Actions</th>
@@ -391,7 +406,7 @@ const Replies: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <TableRowSkeleton columns={8} rows={limit} />
+              <TableRowSkeleton columns={9} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
                 <tr
@@ -411,6 +426,18 @@ const Replies: React.FC = () => {
                   </td>
                   <td className="border p-2">{item.fragmentTitle}</td>
                   <td className="border p-2">{item.categoryName}</td>
+                  <td
+                    className={clsx(
+                      "border p-2 capitalize text-white font-medium rounded",
+                      {
+                        "bg-yellow-500": item.aiReviewStatus === "pending",
+                        "bg-red-500": item.aiReviewStatus === "rejected",
+                        "bg-green-600": item.aiReviewStatus === "approved",
+                      }
+                    )}
+                  >
+                    {item.aiReviewStatus || "pending"}
+                  </td>
                   <td className="border p-2">
                     <FontAwesomeIcon
                       icon={getDepthIcon(item.depth)}
@@ -436,6 +463,15 @@ const Replies: React.FC = () => {
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
+                    </button>
+                    <button
+                      className="bg-blue-500 text-white  mt-2 py-2 px-3 rounded-lg hover:bg-blue-700 transition"
+                      onClick={() => {
+                        setSelectedReply(item);
+                        setIsFeedbackModalOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} />
                     </button>
                     <button
                       className={`py-2 px-3 rounded-lg mt-3  text-white transition  ${

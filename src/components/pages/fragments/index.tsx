@@ -234,6 +234,7 @@ const Fragments: React.FC = () => {
       <FragmentFeedbackReviewModal
         isOpen={isFeedbackModalOpen}
         onClose={() => setIsFeedbackModalOpen(false)}
+        aiStatus={selectedFragment?.aiReviewStatus}
         feedback={selectedFragment?.aiReviewFeedback}
         summary={selectedFragment?.aiReviewSummary}
       />
@@ -377,7 +378,6 @@ const Fragments: React.FC = () => {
                   >
                     {item.aiReviewStatus || "pending"}
                   </td>
-
                   <td
                     className={clsx("border p-2", {
                       "bg-green-500 text-white": item.status === "published",
