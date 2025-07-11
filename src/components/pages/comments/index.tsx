@@ -426,6 +426,13 @@ const Replies: React.FC = () => {
                   </td>
                   <td className="border p-2">{item.fragmentTitle}</td>
                   <td className="border p-2">{item.categoryName}</td>
+                  <td className="border p-2">
+                    <FontAwesomeIcon
+                      icon={getDepthIcon(item.depth)}
+                      className="text-yellow-400 px-1"
+                    />
+                    {item.depth}
+                  </td>
                   <td
                     className={clsx(
                       "border p-2 capitalize text-white font-medium rounded",
@@ -437,13 +444,6 @@ const Replies: React.FC = () => {
                     )}
                   >
                     {item.aiReviewStatus || "pending"}
-                  </td>
-                  <td className="border p-2">
-                    <FontAwesomeIcon
-                      icon={getDepthIcon(item.depth)}
-                      className="text-yellow-400 px-1"
-                    />
-                    {item.depth}
                   </td>
                   <td
                     className={clsx("border p-2", {
