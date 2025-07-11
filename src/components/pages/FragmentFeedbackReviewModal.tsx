@@ -45,7 +45,7 @@ export const FragmentFeedbackReviewModal: React.FC<
         </div>
 
         {/* Body */}
-        <div className="p-6">
+        <div className="p-6 max-h-[80vh] overflow-y-auto">
           {hasSummary && (
             <div className="mb-6 p-4 bg-gray-100 border border-gray-300 rounded-lg">
               <h3 className="font-semibold mb-1 text-gray-800">

@@ -1,6 +1,15 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import {
+  faExclamationTriangle,
+  faBalanceScale,
+  faCopy,
+  faSkullCrossbones,
+  faLightbulb,
+  faInfoCircle,
+  faCheckCircle,
+  faWandMagicSparkles,
+} from "@fortawesome/free-solid-svg-icons";
 
 interface IssueFeedback {
   flagged?: boolean;
@@ -23,6 +32,13 @@ interface FragmentFeedbackReviewProps {
   aiStatus?: string;
 }
 
+const iconMap: Record<string, any> = {
+  Misinformation: faExclamationTriangle,
+  "Unethical Advice": faBalanceScale,
+  Plagiarism: faCopy,
+  "Abusive Language": faSkullCrossbones,
+};
+
 export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
   feedback,
   aiStatus,
@@ -36,10 +52,10 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
     return (
       <div
         key={label}
-        className="border border-red-200 bg-red-50 p-4 rounded-md mb-4"
+        className="border border-red-200 bg-red-50 p-4 rounded-md mb-4 overflow-x-auto"
       >
         <p className="font-semibold text-red-700 flex items-center gap-2 mb-1">
-          <FontAwesomeIcon icon={faInfoCircle} />
+          <FontAwesomeIcon icon={iconMap[label] || faInfoCircle} />
           {label}
         </p>
 
@@ -56,7 +72,10 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
         {issue.matches?.length ? (
           <ul className="list-disc list-inside text-sm text-gray-700 mt-2">
             {issue.matches.map((m, idx) => (
-              <li key={idx} className="italic text-gray-600">
+              <li
+                key={idx}
+                className="italic text-gray-600 whitespace-pre-wrap break-words"
+              >
                 ❝{m}❞
               </li>
             ))}
@@ -65,7 +84,13 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
 
         {issue.suggestions?.length ? (
           <div className="mt-3">
-            <p className="font-medium text-sm text-gray-800">Suggestions:</p>
+            <p className="font-medium text-sm text-green-700 flex items-center gap-1">
+              <FontAwesomeIcon
+                icon={faWandMagicSparkles}
+                className="text-green-500 mr-1"
+              />
+              Suggestions
+            </p>
             <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
               {issue.suggestions.map((s, i) => (
                 <li key={i}>{s}</li>
@@ -78,15 +103,17 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
   };
 
   return (
-    <div className="text-sm text-gray-800 space-y-4">
+    <div className="text-sm text-gray-800 space-y-4 overflow-x-hidden">
       {aiStatus === "rejected" ? (
-        <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200">
+        <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200 flex items-center gap-2">
+          <FontAwesomeIcon icon={faInfoCircle} />
           <p className="font-semibold">
             This fragment was blocked due to content violations:
           </p>
         </div>
       ) : (
-        <div className="bg-red-100 text-green-800 p-3 rounded-md border border-red-200">
+        <div className="bg-red-100 text-green-800 p-3 rounded-md border border-red-200 flex items-center gap-2">
+          <FontAwesomeIcon icon={faCheckCircle} />
           <p className="font-semibold">
             This fragment passed moderation but includes areas for improvement:
           </p>

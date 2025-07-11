@@ -4,6 +4,10 @@ import {
   faInfoCircle,
   faLightbulb,
   faWandMagicSparkles,
+  faCommentSlash,
+  faExclamationTriangle,
+  faBan,
+  faScaleBalanced,
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Issue {
@@ -27,6 +31,14 @@ interface Props {
   feedback: CommentFeedback;
 }
 
+const iconMap: Record<string, any> = {
+  "Abusive or offensive language": faCommentSlash,
+  "Harsh or disrespectful tone": faExclamationTriangle,
+  Misinformation: faLightbulb,
+  "Spam or irrelevant content": faBan,
+  "Unethical or inappropriate advice": faScaleBalanced,
+};
+
 export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
   if (!feedback) return null;
 
@@ -39,9 +51,9 @@ export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
     if (!issue?.flagged) return null;
 
     return (
-      <div className="border border-red-200 bg-red-50 p-4 rounded-md mb-4">
+      <div className="border border-red-200 bg-red-50 p-4 rounded-md mb-4 overflow-x-auto">
         <p className="font-semibold text-red-700 flex items-center gap-2 mb-1">
-          <FontAwesomeIcon icon={faInfoCircle} />
+          <FontAwesomeIcon icon={iconMap[label] || faInfoCircle} />
           {label}
         </p>
 
@@ -76,7 +88,10 @@ export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
               </p>
               <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
                 {issue[matchKey]!.map((m, idx) => (
-                  <li key={idx} className="italic text-gray-600">
+                  <li
+                    key={idx}
+                    className="italic text-gray-600 whitespace-pre-wrap break-words"
+                  >
                     ❝{m}❞
                   </li>
                 ))}
@@ -86,12 +101,12 @@ export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
 
         {Array.isArray(issue.suggestions) && issue.suggestions.length > 0 && (
           <div className="mt-3">
-            <p className="font-medium text-sm text-gray-800 flex items-center gap-2">
+            <p className="font-medium text-sm text-green-700 flex items-center gap-1">
               <FontAwesomeIcon
                 icon={faWandMagicSparkles}
                 className="text-green-500"
               />
-              Suggestions:
+              Suggestions
             </p>
             <ul className="list-disc list-inside text-sm text-gray-700 mt-1">
               {issue.suggestions.map((s, i) => (
@@ -105,9 +120,12 @@ export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
   };
 
   return (
-    <div className="text-sm text-gray-800 space-y-4">
-      <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200">
-        <p className="font-semibold">This comment was blocked due to:</p>
+    <div className="text-sm text-gray-800 space-y-4 overflow-x-hidden">
+      <div className="bg-red-100 text-red-800 p-3 rounded-md border border-red-200 flex items-center gap-2">
+        <FontAwesomeIcon icon={faInfoCircle} />
+        <p className="font-semibold">
+          This comment was blocked due to content violations:
+        </p>
       </div>
 
       {renderIssue("Abusive or offensive language", feedback.abusive)}
