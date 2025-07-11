@@ -30,7 +30,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 h-[100%] pt-[350px] sm:pt-10 md:pt-20 xl:pt-48 flex items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 h-[100%] pt-[400px] sm:pt-10 md:pt-20 xl:pt-48 flex items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full md:w-[90%]  max-w-4xl mx-4 my-8">

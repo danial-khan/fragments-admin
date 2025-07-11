@@ -30,7 +30,7 @@ export const CommentFeedbackReviewModal: React.FC<CommentFeedbackReviewModalProp
 
   return (
     <div
-      className="fixed inset-0 z-50 h-full flex items-center justify-center overflow-y-auto"
+      className="fixed inset-0 z-50 pt-[450px] md:pt-0 xl:pt-28 h-full flex items-center justify-center overflow-y-auto"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl mx-4 my-8">
