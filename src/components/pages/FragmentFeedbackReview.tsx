@@ -76,7 +76,7 @@ export const FragmentFeedbackReview: React.FC<FragmentFeedbackReviewProps> = ({
                 key={idx}
                 className="italic text-gray-600 whitespace-pre-wrap break-words"
               >
-                ❝{m}❞
+                {m}
               </li>
             ))}
           </ul>
