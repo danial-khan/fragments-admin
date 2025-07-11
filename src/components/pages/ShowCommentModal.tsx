@@ -7,6 +7,8 @@ import {
   faCommentDots,
   faComments,
   faArrowRight,
+  faThumbsUp,
+  faThumbsDown,
 } from "@fortawesome/free-solid-svg-icons";
 import { Reply } from "../pages/comments/index";
 import DOMPurify from "dompurify";
@@ -151,6 +153,32 @@ const ShowCommentModal: React.FC<ShowCommentModalProps> = ({
                 {reply.parentReplyId ? " Nested reply" : " Top-level comment"}
               </p>
             </div>
+          </div>
+          <div className="mt-6 flex gap-4 flex-wrap">
+            {[
+              {
+                label: "Upvotes",
+                value: reply.upvotes?.length || 0,
+                icon: faThumbsUp,
+                color: "text-green-600",
+              },
+              {
+                label: "Downvotes",
+                value: reply.downvotes?.length || 0,
+                icon: faThumbsDown,
+                color: "text-red-600",
+              },
+            ].map(({ label, value, icon, color }) => (
+              <div
+                key={label}
+                className="flex items-center gap-2 bg-gray-100 px-4 py-2 rounded-lg shadow-sm"
+              >
+                <FontAwesomeIcon icon={icon} className={color} />
+                <span className="text-sm font-medium text-gray-700">
+                  {value} {label}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 

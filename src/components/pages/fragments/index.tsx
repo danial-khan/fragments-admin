@@ -1,5 +1,12 @@
 "use client";
-import { faBan, faCheckCircle, faEye, faSearch, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBan,
+  faCheckCircle,
+  faEye,
+  faInfoCircle,
+  faSearch,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import React, { useCallback, useEffect, useState, useTransition } from "react";
@@ -12,6 +19,7 @@ import { useAuthContext } from "../../../context/authContext";
 import useDotLoader from "../../../hooks/useDotLoader";
 import useDebounce from "../../../hooks/useDebounce";
 import { Link } from "react-router-dom";
+import { FragmentFeedbackReviewModal } from "../FragmentFeedbackReviewModal";
 
 export interface Fragment {
   _id: string;
@@ -19,6 +27,9 @@ export interface Fragment {
   author: { _id: string; name: string };
   category: { _id: string; name: string };
   status: string;
+  aiReviewStatus: string;
+  aiReviewFeedback: any;
+  aiReviewSummary: string;
   createdAt: string;
   updatedAt?: string;
   description?: string;
@@ -62,6 +73,7 @@ const Fragments: React.FC = () => {
   const [authorsData, setAuthorsData] = useState<Option[]>([]);
   const [selectedFragment, setSelectedFragment] = useState<Fragment>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [authorsLoading, setAuthorsLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
 
@@ -219,6 +231,14 @@ const Fragments: React.FC = () => {
         fragment={selectedFragment}
       />
 
+      <FragmentFeedbackReviewModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        aiStatus={selectedFragment?.aiReviewStatus}
+        feedback={selectedFragment?.aiReviewFeedback}
+        summary={selectedFragment?.aiReviewSummary}
+      />
+
       <h1 className="text-2xl font-bold mb-4 text-secondary">Fragments</h1>
 
       <div className="flex flex-wrap xl:flex-nowrap gap-x-2   gap-y-2 mb-4 md:items-center">
@@ -323,6 +343,7 @@ const Fragments: React.FC = () => {
               <th className="border p-2 text-left">Title</th>
               <th className="border p-2 text-left">Author</th>
               <th className="border p-2 text-left">Category</th>
+              <th className="border p-2 text-left">AI Status</th>
               <th className="border p-2 text-left">Status</th>
               <th className="border p-2 text-left">Created At</th>
               <th className="border p-2 text-left">Actions</th>
@@ -330,14 +351,14 @@ const Fragments: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <TableRowSkeleton columns={6} rows={limit} />
+              <TableRowSkeleton columns={7} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
                 <tr
                   key={item._id}
                   className="hover:bg-gray-50  text-xs sm:text-sm"
                 >
-                  <td className="border  p-2">{item.title}</td>
+                  <td className="border p-2">{item.title}</td>
                   <td className="border p-2 cursor-pointer hover:underline">
                     <Link to={`/dashboard/users/${item.author._id}`}>
                       {" "}
@@ -345,6 +366,18 @@ const Fragments: React.FC = () => {
                     </Link>
                   </td>
                   <td className="border p-2">{item.category.name}</td>
+                  <td
+                    className={clsx(
+                      "border p-2 capitalize text-white font-medium rounded",
+                      {
+                        "bg-yellow-500": item.aiReviewStatus === "pending",
+                        "bg-red-500": item.aiReviewStatus === "rejected",
+                        "bg-green-600": item.aiReviewStatus === "approved",
+                      }
+                    )}
+                  >
+                    {item.aiReviewStatus || "pending"}
+                  </td>
                   <td
                     className={clsx("border p-2", {
                       "bg-green-500 text-white": item.status === "published",
@@ -356,15 +389,24 @@ const Fragments: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="border  sm:p-2 p-3 space-x-2">
+                  <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white  xl:ml-5  mt-2 py-1 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white  mt-2 py-2 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg text-white  mt-2 transition  ${
+                      className="bg-blue-500 text-white  mt-2 py-2 px-3 rounded-lg hover:bg-blue-700 transition"
+                      onClick={() => {
+                        setSelectedFragment(item);
+                        setIsFeedbackModalOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} />
+                    </button>
+                    <button
+                      className={`py-2 px-3 rounded-lg text-white  mt-2 transition  ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
@@ -380,20 +422,22 @@ const Fragments: React.FC = () => {
                       )}
                     </button>
                     {user.type === "admin" && (
-                        <button
+                      <button
                         onClick={() => deleteFragment(item._id)}
                         disabled={deletingFragmentId === item._id}
                         className={clsx(
-                          "text-white py-1  mt-2 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-2 mt-2 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingFragmentId === item._id
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-gray-700 hover:bg-gray-900"
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
                         )}
-                        >
-                        {deletingFragmentId === item._id
-                          ? `Deleting${dots}`
-                          : <FontAwesomeIcon icon={faTrash} />}
-                        </button>
+                      >
+                        {deletingFragmentId === item._id ? (
+                          `${dots}`
+                        ) : (
+                          <FontAwesomeIcon icon={faTrash} />
+                        )}
+                      </button>
                     )}
                   </td>
                 </tr>

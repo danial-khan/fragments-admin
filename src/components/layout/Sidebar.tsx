@@ -1,18 +1,18 @@
 import React, { useCallback, useState } from "react";
 import {
+  faBars,
+  faComments,
   faHome,
   faIcons,
+  faLeaf,
   faSignOut,
+  faTimes,
   faUser,
   faUserGraduate,
   faUsers,
-  faLeaf,
-  faComments,
-  faBars,
-  faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, useNavigate, useLocation } from "react-router-dom"; 
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import apiFetch from "../../utils/axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../context/authContext";
@@ -20,7 +20,7 @@ import { useAuthContext } from "../../context/authContext";
 const Sidebar = () => {
   const { setUser } = useAuthContext();
   const navigate = useNavigate();
-  const location = useLocation(); 
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
@@ -62,7 +62,6 @@ const Sidebar = () => {
         </button>
       </div>
 
-      {/* Sidebar */}
       <aside
         id="sidebar"
         className={`fixed top-0 left-0 h-full  bg-white shadow-lg transition-all duration-300 ease-in-out z-40
@@ -74,11 +73,22 @@ const Sidebar = () => {
             <li
               key={index}
               className={`font-semibold cursor-pointer rounded-xl items-center hover:bg-yellow-50 transition-all duration-300 p-3
-                ${location.pathname === item.to ? "bg-yellow-100 text-yellow-600" : ""}
-              `} 
+                ${
+                  location.pathname === item.to
+                    ? "bg-yellow-100 text-secondary"
+                    : ""
+                }
+              `}
             >
-              <Link to={item.to} onClick={toggleSidebar} className="flex h-full w-full">
-                <FontAwesomeIcon icon={item.icon} className="text-lg mr-3 h-5" />
+              <Link
+                to={item.to}
+                onClick={toggleSidebar}
+                className="flex h-full w-full"
+              >
+                <FontAwesomeIcon
+                  icon={item.icon}
+                  className="text-lg mr-3 h-5"
+                />
                 <span className="transition-opacity duration-300 ">
                   {item.label}
                 </span>
@@ -88,7 +98,10 @@ const Sidebar = () => {
         </ul>
         <ul>
           <li className="font-semibold  cursor-pointer items-center hover:bg-yellow-50 transition-all duration-300 p-3">
-            <button className="flex h-full w-full cursor-pointer" onClick={logout}>
+            <button
+              className="flex h-full w-full cursor-pointer"
+              onClick={logout}
+            >
               <FontAwesomeIcon icon={faSignOut} className="text-lg mr-3 h-5" />
               <span className="transition-opacity duration-300 ">Logout</span>
             </button>

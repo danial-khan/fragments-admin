@@ -1,20 +1,20 @@
 "use client";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBan,
-  faCheckCircle,
+  faCheck,
   faPlus,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
 import { useCallback, useEffect, useState, useTransition } from "react";
 import { Link } from "react-router-dom";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
-import clsx from "clsx";
-import apiFetch from "../../../utils/axios";
 import { toast } from "react-toastify";
 import { useAuthContext } from "../../../context/authContext";
-import CreateUserModal from "../CreateUserModal";
-import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
 import useDotLoader from "../../../hooks/useDotLoader";
+import apiFetch from "../../../utils/axios";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import CreateUserModal from "../CreateUserModal";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -217,16 +217,16 @@ const Users = () => {
                               : activateUser(userData._id)
                           }
                           className={clsx(
-                            "text-white py-1 rounded-lg  px-3 font-medium transition-all duration-300   text-xs ",
+                            "text-white py-2 rounded-lg px-3 font-medium transition-all duration-300 text-sm ",
                             userData.active
-                              ? "bg-red-500 hover:bg-green-600"
-                              : "bg-green-500 hover:bg-red-600"
+                              ? "bg-red-500 hover:bg-red-600"
+                              : "bg-green-500 hover:bg-green-600"
                           )}
                         >
                           {userData.active ? (
                             <FontAwesomeIcon icon={faBan} />
                           ) : (
-                            <FontAwesomeIcon icon={faCheckCircle} />
+                            <FontAwesomeIcon icon={faCheck} />
                           )}
                         </button>
 
@@ -235,14 +235,14 @@ const Users = () => {
                             onClick={() => deleteUser(userData._id)}
                             disabled={deletingUserId === userData._id}
                             className={clsx(
-                              "text-white py-1 rounded-lg px-3   font-medium transition-all duration-300",
+                              "text-white py-2 rounded-lg px-3 font-medium transition-all duration-300",
                               deletingUserId === userData._id
                                 ? "bg-gray-500 cursor-not-allowed"
                                 : "bg-gray-700 hover:bg-gray-900"
                             )}
                           >
                             {deletingUserId === userData._id ? (
-                              `Deleting${dots}`
+                              `${dots}`
                             ) : (
                               <FontAwesomeIcon icon={faTrash} />
                             )}

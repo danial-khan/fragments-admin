@@ -1,30 +1,30 @@
 "use client";
-import React, { useEffect, useState, useCallback, useTransition } from "react";
-import apiFetch from "../../../utils/axios";
-import clsx from "clsx";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSearch,
+  faBan,
+  faCheck,
+  faCheckCircle,
   faComment,
   faCommentDots,
   faComments,
-  faUsersViewfinder,
-  faDeleteLeft,
-  faBridgeLock,
-  faCheckCircle,
-  faBan,
-  faTrash,
   faEye,
+  faInfoCircle,
+  faSearch,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import clsx from "clsx";
 import DOMPurify from "dompurify";
-import ShowCommentModal from "../ShowCommentModal";
-import { toast } from "react-toastify";
-import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
-import SelectSkeleton from "../../skeletons/SelectSkeleton";
-import { useAuthContext } from "../../../context/authContext";
-import useDotLoader from "../../../hooks/useDotLoader";
-import useDebounce from "../../../hooks/useDebounce";
+import React, { useCallback, useEffect, useState, useTransition } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useAuthContext } from "../../../context/authContext";
+import useDebounce from "../../../hooks/useDebounce";
+import useDotLoader from "../../../hooks/useDotLoader";
+import apiFetch from "../../../utils/axios";
+import SelectSkeleton from "../../skeletons/SelectSkeleton";
+import TableRowSkeleton from "../../skeletons/TableRowSkeleton";
+import ShowCommentModal from "../ShowCommentModal";
+import CommentFeedbackReviewModal from "../CommentFeedbackReviewModal";
 
 export interface Reply {
   _id: string;
@@ -39,8 +39,13 @@ export interface Reply {
   categoryName: string;
   depth: number;
   status: string;
+  aiReviewStatus: string;
+  aiReviewFeedback: any;
+  aiReviewSummary: string;
   createdAt: string;
   parentReplyId?: string;
+  upvotes?: Array<any>;
+  downvotes?: Array<any>;
 }
 
 interface Option {
@@ -75,6 +80,7 @@ const Replies: React.FC = () => {
   const [usersData, setUsersData] = useState<Option[]>([]);
   const [selectedReply, setSelectedReply] = useState<Reply | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const [usersLoading, setUsersLoading] = useState(false);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
 
@@ -172,7 +178,7 @@ const Replies: React.FC = () => {
         sortOrder,
       };
       if (category) params.category = category;
-      if (userList) params.userList = userList;
+      if (userList) params.author = userList;
       if (debouncedFragmentId) params.fragmentId = debouncedFragmentId;
       if (depth) params.depth = depth;
       if (status) params.status = status;
@@ -228,23 +234,23 @@ const Replies: React.FC = () => {
     setDeletingReplyId(reply._id);
 
     startTransition(() => {
-        apiFetch
-          .delete(`/admin/replies/${reply._id}`, {
-            data: { fragmentId: reply.fragmentId }
-          })
-          .then(() => {
-            toast.success("Fragment deleted successfully");
-            setData((prev) => prev.filter((r) => r._id !== reply._id));
-          })
-          .catch(() => {
-            toast("Error deleting user. Please try again later.", {
-              type: "error",
-            });
-            fetchData();
-          })
-          .finally(() => {
-            setDeletingReplyId(null);
+      apiFetch
+        .delete(`/admin/replies/${reply._id}`, {
+          data: { fragmentId: reply.fragmentId },
+        })
+        .then(() => {
+          toast.success("Fragment deleted successfully");
+          setData((prev) => prev.filter((r) => r._id !== reply._id));
+        })
+        .catch(() => {
+          toast("Error deleting user. Please try again later.", {
+            type: "error",
           });
+          fetchData();
+        })
+        .finally(() => {
+          setDeletingReplyId(null);
+        });
     });
   };
 
@@ -257,6 +263,14 @@ const Replies: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         reply={selectedReply}
+      />
+
+      <CommentFeedbackReviewModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        aiStatus={selectedReply?.aiReviewStatus}
+        feedback={selectedReply?.aiReviewFeedback}
+        summary={selectedReply?.aiReviewSummary}
       />
 
       <h1 className="text-2xl font-bold mb-4 text-secondary flex items-center gap-2">
@@ -384,6 +398,7 @@ const Replies: React.FC = () => {
               <th className="border p-2 text-left">Fragment</th>
               <th className="border p-2 text-left">Category</th>
               <th className="border p-2 text-left">Depth</th>
+              <th className="border p-2 text-left">AI Status</th>
               <th className="border p-2 text-left">Status</th>
               <th className="border p-2 text-left">Created</th>
               <th className="border p-2 text-left">Actions</th>
@@ -391,10 +406,13 @@ const Replies: React.FC = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              <TableRowSkeleton columns={8} rows={limit} />
+              <TableRowSkeleton columns={9} rows={limit} />
             ) : data.length > 0 ? (
               data.map((item) => (
-                <tr key={item._id} className="hover:bg-gray-50 text-xs sm:text-sm">
+                <tr
+                  key={item._id}
+                  className="hover:bg-gray-50 text-xs sm:text-sm"
+                >
                   <td
                     className="border p-2  "
                     dangerouslySetInnerHTML={{
@@ -416,6 +434,18 @@ const Replies: React.FC = () => {
                     {item.depth}
                   </td>
                   <td
+                    className={clsx(
+                      "border p-2 capitalize text-white font-medium rounded",
+                      {
+                        "bg-yellow-500": item.aiReviewStatus === "pending",
+                        "bg-red-500": item.aiReviewStatus === "rejected",
+                        "bg-green-600": item.aiReviewStatus === "approved",
+                      }
+                    )}
+                  >
+                    {item.aiReviewStatus || "pending"}
+                  </td>
+                  <td
                     className={clsx("border p-2", {
                       "bg-green-500 text-white": item.status === "published",
                       "bg-red-500 text-white": item.status === "blocked",
@@ -427,41 +457,53 @@ const Replies: React.FC = () => {
                   <td className="border p-2">
                     {new Date(item.createdAt).toLocaleDateString()}
                   </td>
-                  <td className=" border-b border-r xl:flex flex-row  sm:p-2 p-3  space-x-2">
+                  <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white py-1  px-3 h-7 xl:mt-3   rounded-lg hover:bg-secondary transition"
+                      className="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
                     </button>
                     <button
-                      className={`py-1 px-3 rounded-lg mt-3  text-white transition  ${
+                      className="bg-blue-500 text-white  mt-2 py-2 px-3 rounded-lg hover:bg-blue-700 transition"
+                      onClick={() => {
+                        setSelectedReply(item);
+                        setIsFeedbackModalOpen(true);
+                      }}
+                    >
+                      <FontAwesomeIcon icon={faInfoCircle} />
+                    </button>
+                    <button
+                      className={`py-2 px-3 rounded-lg mt-3  text-white transition  ${
                         item.status === "blocked"
                           ? "bg-green-600 hover:bg-green-700"
                           : "bg-red-500 hover:bg-red-600"
                       }`}
                       onClick={() => toggleReplyStatus(item)}
                     >
-                      {item.status === "blocked" ? <FontAwesomeIcon icon={faCheckCircle} /> : <FontAwesomeIcon icon={faBan} />}
+                      {item.status === "blocked" ? (
+                        <FontAwesomeIcon icon={faCheck} />
+                      ) : (
+                        <FontAwesomeIcon icon={faBan} />
+                      )}
                     </button>
                     {user.type === "admin" && (
-                        <button
+                      <button
                         onClick={() => deleteReply(item)}
                         disabled={deletingReplyId === item._id}
                         className={clsx(
-                          "text-white py-1 mt-3 rounded-lg px-3 font-medium transition-all duration-300",
+                          "text-white py-2 mt-3 rounded-lg px-3 font-medium transition-all duration-300",
                           deletingReplyId === item._id
-                          ? "bg-gray-500 cursor-not-allowed"
-                          : "bg-gray-700 hover:bg-gray-900"
+                            ? "bg-gray-500 cursor-not-allowed"
+                            : "bg-gray-700 hover:bg-gray-900"
                         )}
-                      
-                        >
+                      >
                         {deletingReplyId === item._id ? (
-                          `Deleting${dots}`
+                          `${dots}`
                         ) : (
                           <FontAwesomeIcon icon={faTrash} />
                         )}
-                        </button>
+                      </button>
                     )}
                   </td>
                 </tr>
