@@ -10,6 +10,7 @@ import {
   faUser,
   faUserGraduate,
   faUsers,
+  faCreditCard,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -37,6 +38,7 @@ const Sidebar = () => {
     { label: "Categories", icon: faIcons, to: "/dashboard/categories" },
     { label: "Fragments", icon: faLeaf, to: "/dashboard/fragments" },
     { label: "Comments", icon: faComments, to: "/dashboard/comments" },
+    { label: "Subscriptions", icon: faCreditCard, to: "/dashboard/subscriptions" },
   ];
 
   const logout = useCallback(() => {

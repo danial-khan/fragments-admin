@@ -12,6 +12,7 @@ import UserDetails from "./components/pages/users/userDetails";
 import Categories from "./components/pages/categories";
 import Fragments from "./components/pages/fragments";
 import Comments from "./components/pages/comments";
+import Subscriptions from "./components/pages/subscriptions";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
             <Route path="categories" Component={Categories} />
             <Route path="fragments" Component={Fragments} />
             <Route path="comments" Component={Comments} />
+            <Route path="subscriptions" Component={Subscriptions} />
           </Route>
         </Routes>
       </BrowserRouter>
