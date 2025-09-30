@@ -53,7 +53,7 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-primary">
       <div className="bg-white p-8 rounded-lg shadow-2xl w-96 items-center justify-center">
         <img
-          src="/assets/feather.png"
+          src="/assets/logo-no-bg.png"
           alt="favicon"
           width={100}
           height={100}
