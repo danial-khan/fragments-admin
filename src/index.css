@@ -1,18 +1,72 @@
 @import "tailwindcss";
 
 @theme {
-    --font-display: "Satoshi", "sans-serif";
+    /* Fonts */
+    --font-family-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-family-serif: "Crimson Text", ui-serif, Georgia, serif;
+    --font-display: "Inter", "sans-serif";
 
+    /* Base Colors */
     --color-background: #0a0a0a;
     --color-foreground: #ededed;
     --color-primary: #f5e6d3;
     --color-secondary: #8b4513;
-    --color-accent: #f1941c;
-    --color-semisecondary: #6a3514;
     --color-accent: #d38725;
-    /* ... */
+    
+    /* Secondary Variations */
+    --color-secondary-dark: #6a3514;
+    --color-secondary-darker: #382a22;
+    --color-secondary-medium: #b15d28;
+    --color-semisecondary: #6a3514;
+    
+    /* Background Variations */
+    --color-background-alt: #f9f5f0;
+    --color-background-light: #FEFDE9;
+    --color-background-pale: #fefce8;
+    --color-background-peach: #fceadd;
+    --color-background-lime: #f3f0b5;
+    
+    /* Accent Colors */
+    --color-accent-orange: #f97316;
+    --color-accent-orange-dark: #ea580c;
+    --color-accent-orange-darker: #c2410c;
+    --color-accent-orange-light: #fed7aa;
+    
+    /* Border Colors */
+    --color-border-light: #d1d5db;
+    --color-border-medium: #6b7280;
+    --color-border-pale: #e5e7eb;
+    --color-border-yellow: #fde047;
+    --color-primary-hover: #e8dac8;
+    
+    /* Text Colors */
+    --color-text-muted: #6b7280;
+    --color-text-dark: #1f2937;
+    --color-text-light: #9ca3af;
+    
+    /* State Colors */
+    --color-error: #ef4444;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-info: #3b82f6;
+    
+    /* Overlay Colors */
+    --color-overlay: rgba(0, 0, 0, 0.5);
+    
+    /* Yellow Variations (for icons/stars) */
+    --color-yellow-500: #eab308;
+    --color-yellow-600: #ca8a04;
   }
 
   html, body, #root {
     height: 100%;
+  }
+  
+  body {
+    font-family: "Crimson Text", ui-serif, Georgia, serif;
+  }
+  
+  /* Use Inter for headings and UI elements */
+  h1, h2, h3, h4, h5, h6, button, .btn, nav, .navigation {
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
   }

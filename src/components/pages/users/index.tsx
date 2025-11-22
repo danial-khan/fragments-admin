@@ -139,7 +139,7 @@ const Users = () => {
           <div className="flex items-end justify-end mb-4">
             <button
               onClick={() => setIsCreateUserModalOpen(true)}
-              className="px-4 py-2 text-xs sm:text-sm bg-accent text-white rounded-lg hover:bg-[#8b4513] transition duration-300 cursor-pointer text-md"
+              className="px-4 py-2 text-xs sm:text-sm bg-accent text-white rounded-lg hover:bg-secondary transition duration-300 cursor-pointer text-md"
             >
               <FontAwesomeIcon icon={faPlus} className="text-xs sm:text-sm" />{" "}
               Create New Moderator
