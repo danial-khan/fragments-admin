@@ -63,7 +63,7 @@ export const CommentFeedbackReviewModal: React.FC<CommentFeedbackReviewModalProp
             <div className="text-center border border-gray-200 bg-gray-50 p-6 rounded-md">
               <FontAwesomeIcon
                 icon={faCircleInfo}
-                className="text-yellow-500 mb-2"
+                className="text-rating mb-2"
                 size="2x"
               />
               <p className="text-gray-800 font-semibold text-md mt-2">

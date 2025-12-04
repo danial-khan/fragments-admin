@@ -151,7 +151,7 @@ const ShowFragmentModal: React.FC<ShowFragmentModalProps> = ({
             href={`${usersHomePageURL}/dashboard/fragment/${fragment._id}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-yellow-600 hover:underline flex items-center gap-1"
+            className="text-rating-dark hover:underline flex items-center gap-1"
           >
             View Full Fragment
             <FontAwesomeIcon icon={faArrowRight} />

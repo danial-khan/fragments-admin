@@ -64,7 +64,7 @@ export const CommentFeedbackReview: React.FC<Props> = ({ feedback }) => {
         {Array.isArray(issue.examples) && issue.examples.length > 0 && (
           <div className="mt-2">
             <p className="text-sm font-medium text-gray-800 flex items-center gap-2">
-              <FontAwesomeIcon icon={faLightbulb} className="text-yellow-500" />
+              <FontAwesomeIcon icon={faLightbulb} className="text-rating" />
               Examples:
             </p>
             <ul className="list-disc list-inside text-sm text-gray-700 mt-1">

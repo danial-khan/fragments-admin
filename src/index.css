@@ -9,35 +9,41 @@
     /* Base Colors */
     --color-background: #0a0a0a;
     --color-foreground: #ededed;
-    --color-primary: #f5e6d3;
-    --color-secondary: #8b4513;
-    --color-accent: #d38725;
     
-    /* Secondary Variations */
+    /* Primary Colors (Warm beige - main backgrounds, currently: beige) */
+    --color-primary: #f5e6d3;
+    --color-primary-hover: #e8dac8;
+    
+    /* Secondary Colors (Brown - main brand, currently: brown) */
+    --color-secondary: #8b4513;
     --color-secondary-dark: #6a3514;
     --color-secondary-darker: #382a22;
     --color-secondary-medium: #b15d28;
-    --color-semisecondary: #6a3514;
+    
+    /* Accent Colors (Primary accent/CTA, currently: orange) */
+    --color-accent: #d38725;
+    --color-accent-dark: #ea580c;
+    --color-accent-darker: #c2410c;
+    --color-accent-light: #fed7aa;
+    
+    /* Highlight Colors (Secondary accent, currently: bright orange) */
+    --color-highlight: #f97316;
+    --color-highlight-dark: #ea580c;
+    --color-highlight-darker: #c2410c;
+    --color-highlight-light: #fed7aa;
     
     /* Background Variations */
-    --color-background-alt: #f9f5f0;
-    --color-background-light: #FEFDE9;
-    --color-background-pale: #fefce8;
-    --color-background-peach: #fceadd;
-    --color-background-lime: #f3f0b5;
-    
-    /* Accent Colors */
-    --color-accent-orange: #f97316;
-    --color-accent-orange-dark: #ea580c;
-    --color-accent-orange-darker: #c2410c;
-    --color-accent-orange-light: #fed7aa;
+    --color-bg-alt: #f9f5f0;
+    --color-bg-light: #FEFDE9;
+    --color-bg-pale: #fefce8;
+    --color-bg-warm: #fceadd;
+    --color-bg-soft: #f3f0b5;
     
     /* Border Colors */
     --color-border-light: #d1d5db;
     --color-border-medium: #6b7280;
     --color-border-pale: #e5e7eb;
-    --color-border-yellow: #fde047;
-    --color-primary-hover: #e8dac8;
+    --color-border-accent: #fde047;
     
     /* Text Colors */
     --color-text-muted: #6b7280;
@@ -53,9 +59,9 @@
     /* Overlay Colors */
     --color-overlay: rgba(0, 0, 0, 0.5);
     
-    /* Yellow Variations (for icons/stars) */
-    --color-yellow-500: #eab308;
-    --color-yellow-600: #ca8a04;
+    /* Rating Colors (for icons/stars) */
+    --color-rating: #eab308;
+    --color-rating-dark: #ca8a04;
   }
 
   html, body, #root {

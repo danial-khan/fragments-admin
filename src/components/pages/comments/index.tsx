@@ -437,7 +437,7 @@ const Replies: React.FC = () => {
                     className={clsx(
                       "border p-2 capitalize text-white font-medium rounded",
                       {
-                        "bg-yellow-500": item.aiReviewStatus === "pending",
+                        "bg-rating": item.aiReviewStatus === "pending",
                         "bg-red-500": item.aiReviewStatus === "rejected",
                         "bg-green-600": item.aiReviewStatus === "approved",
                       }
@@ -459,7 +459,7 @@ const Replies: React.FC = () => {
                   </td>
                   <td className="border p-2 space-x-2">
                     <button
-                      className="bg-yellow-500 text-white py-2 px-3 rounded-lg hover:bg-secondary transition"
+                      className="bg-rating text-white py-2 px-3 rounded-lg hover:bg-secondary transition"
                       onClick={() => handleView(item)}
                     >
                       <FontAwesomeIcon icon={faEye} />
