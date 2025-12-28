@@ -7,57 +7,63 @@
     --font-display: "Inter", "sans-serif";
 
     /* Base Colors */
-    --color-background: #0a0a0a;
-    --color-foreground: #ededed;
+    --color-background: #ffffff;
+    --color-foreground: #171717;
     
-    /* Primary Colors (Warm beige - main backgrounds, currently: beige) */
-    --color-primary: #f5e6d3;
-    --color-primary-hover: #e8dac8;
+    /* Primary Colors */
+    --color-primary: #eff6ff;
+    --color-primary-light: #f0f9ff;
+    --color-primary-pale: #dbeafe;
+    --color-primary-hover: #dbeafe;
+    --color-primary-foreground: #171717;
     
-    /* Secondary Colors (Brown - main brand, currently: brown) */
-    --color-secondary: #8b4513;
-    --color-secondary-dark: #6a3514;
-    --color-secondary-darker: #382a22;
-    --color-secondary-medium: #b15d28;
+    /* Secondary Colors */
+    --color-secondary: #1e40af;
+    --color-secondary-dark: #1e3a8a;
+    --color-secondary-medium: #3b82f6;
+    --color-secondary-light: #60a5fa;
     
-    /* Accent Colors (Primary accent/CTA, currently: orange) */
-    --color-accent: #d38725;
-    --color-accent-dark: #ea580c;
-    --color-accent-darker: #c2410c;
-    --color-accent-light: #fed7aa;
+    /* Accent Colors */
+    --color-accent: #f59e0b;
+    --color-accent-dark: #d97706;
+    --color-accent-darker: #b45309;
+    --color-accent-light: #fde68a;
     
-    /* Highlight Colors (Secondary accent, currently: bright orange) */
-    --color-highlight: #f97316;
-    --color-highlight-dark: #ea580c;
-    --color-highlight-darker: #c2410c;
-    --color-highlight-light: #fed7aa;
+    /* Highlight Colors */
+    --color-highlight: #0d9488;
+    --color-highlight-dark: #0f766e;
+    --color-highlight-light: #5eead4;
     
     /* Background Variations */
-    --color-bg-alt: #f9f5f0;
-    --color-bg-light: #FEFDE9;
-    --color-bg-pale: #fefce8;
-    --color-bg-warm: #fceadd;
-    --color-bg-soft: #f3f0b5;
+    --color-bg-alt: #f0f9ff;
+    --color-bg-light: #e0f2fe;
+    --color-bg-pale: #dbeafe;
+    --color-bg-soft: #fef3e2;
+    --color-bg-warm: #fef3e2;
     
     /* Border Colors */
-    --color-border-light: #d1d5db;
-    --color-border-medium: #6b7280;
+    --color-border-light: #bfdbfe;
+    --color-border-medium: #3b82f6;
     --color-border-pale: #e5e7eb;
-    --color-border-accent: #fde047;
+    --color-border-accent: #fbbf24;
+    --color-border-accent-300: #fed7aa;
     
     /* Text Colors */
-    --color-text-muted: #6b7280;
-    --color-text-dark: #1f2937;
-    --color-text-light: #9ca3af;
+    --color-text-muted: #64748b;
+    --color-text-dark: #1e293b;
+    
+    /* Additional color mappings for camelCase usage */
+    --color-bgAlt: #f0f9ff;
+    --color-bgLight: #e0f2fe;
+    --color-bgPale: #dbeafe;
+    --color-bgSoft: #fef3e2;
+    --color-bgWarm: #fef3e2;
+    --color-textMuted: #64748b;
+    --color-textDark: #1e293b;
     
     /* State Colors */
     --color-error: #ef4444;
-    --color-success: #22c55e;
-    --color-warning: #f59e0b;
-    --color-info: #3b82f6;
-    
-    /* Overlay Colors */
-    --color-overlay: rgba(0, 0, 0, 0.5);
+    --color-success: #10b981;
     
     /* Rating Colors (for icons/stars) */
     --color-rating: #eab308;
@@ -69,10 +75,10 @@
   }
   
   body {
-    font-family: "Crimson Text", ui-serif, Georgia, serif;
+    font-family:  Arial, Helvetica, sans-serif;
   }
   
   /* Use Inter for headings and UI elements */
   h1, h2, h3, h4, h5, h6, button, .btn, nav, .navigation {
-    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-family:  Arial, Helvetica, sans-serif;
   }
